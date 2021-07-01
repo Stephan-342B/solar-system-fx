@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.mahefa.controller.MainWindowController"
+            fx:id="anchorPane" prefHeight="800.0" prefWidth="800.0">
+    <children>
+        <SubScene fx:id="subScene" depthBuffer="true" width="800" height="800">
+            <antiAliasing>
+                <SceneAntialiasing fx:constant="BALANCED"/>
+            </antiAliasing>
+            <root>
+                <Region />
+            </root>
+        </SubScene>
+        <HBox AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="10">
+            <padding>
+                <Insets top="15" left="12" bottom="15" right="12"></Insets>
+            </padding>
+            <Button text="Planet view" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+                <graphic>
+                    <Region styleClass="bt-planet"></Region>
+                </graphic>
+            </Button>
+            <Button text="Inner solar system" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+                <graphic>
+                    <Region styleClass="bt-inner-solar-system"></Region>
+                </graphic>
+            </Button>
+            <Button text="Outer solar system" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+                <graphic>
+                    <Region styleClass="bt-outer-solar-system"></Region>
+                </graphic>
+            </Button>
+        </HBox>
+    </children>
+</AnchorPane>

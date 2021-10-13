@@ -1,0 +1,11 @@
+.timer {
+    -fx-font-size: 26px;
+    -fx-opacity: 100%;
+    -fx-font-weight: bold;
+}
+
+.date {
+    -fx-font-size: 12px;
+    -fx-opacity: 70%;
+    -fx-font-weight: bold;
+}

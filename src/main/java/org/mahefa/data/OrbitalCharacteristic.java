@@ -1,124 +1,81 @@
 package org.mahefa.data;
 
-import org.mahefa.common.utils.ComputationUtils;
-
 public class OrbitalCharacteristic {
 
-    private final double aphelion;
-    private final double perihelion;
-    private final double semiMajorAxis;
-    private final double semiMinorAxis;
-
-    private final double inclination;
-
-    private final double eccentricity;
-
-    private final double orbitalSpeed;
-    private final double orbitalPeriod;
-    private final double orbitalDegreePerSec;
-    private final double synodicPeriod;
+    private final double[] semiMajorAxis;
+    private final double[] meanLongitudes;
+    private final double[] eccentricities;
+    private final double[] inclinations;
+    private final double[] longitudeAscendingNodes;
+    private final double[] longitudesPerihelion;
 
     private OrbitalCharacteristic(Builder builder) {
-        this.aphelion = builder.aphelion;
-        this.perihelion = builder.perihelion;
         this.semiMajorAxis = builder.semiMajorAxis;
-        this.semiMinorAxis = builder.semiMinorAxis;
-
-        this.inclination = builder.inclination;
-
-        this.eccentricity = builder.eccentricity;
-
-        this.orbitalSpeed = builder.orbitalSpeed;
-        this.orbitalPeriod = builder.orbitalPeriod;
-        this.orbitalDegreePerSec = builder.orbitalDegreePerSec;
-        this.synodicPeriod = builder.synodicPeriod;
+        this.meanLongitudes = builder.meanLongitudes;
+        this.eccentricities = builder.eccentricities;
+        this.inclinations = builder.inclinations;
+        this.longitudeAscendingNodes = builder.longitudeAscendingNodes;
+        this.longitudesPerihelion = builder.longitudesPerihelion;
     }
 
-    public double getAphelion() {
-        return aphelion;
-    }
-
-    public double getPerihelion() {
-        return perihelion;
-    }
-
-    public double getSemiMajorAxis() {
+    public double[] getSemiMajorAxis() {
         return semiMajorAxis;
     }
 
-    public double getSemiMinorAxis() {
-        return semiMinorAxis;
+    public double[] getMeanLongitudes() {
+        return meanLongitudes;
     }
 
-    public double getInclination() {
-        return inclination;
+    public double[] getEccentricities() {
+        return eccentricities;
     }
 
-    public double getEccentricity() {
-        return eccentricity;
+    public double[] getInclinations() {
+        return inclinations;
     }
 
-    public double getOrbitalSpeed() {
-        return orbitalSpeed;
+    public double[] getLongitudeAscendingNodes() {
+        return longitudeAscendingNodes;
     }
 
-    public double getOrbitalPeriod() {
-        return orbitalPeriod;
-    }
-
-    public double getOrbitalDegreePerSec() {
-        return orbitalDegreePerSec;
-    }
-
-    public double getSynodicPeriod() {
-        return synodicPeriod;
+    public double[] getLongitudesPerihelion() {
+        return longitudesPerihelion;
     }
 
     public static class Builder {
-        private final double aphelion;
-        private final double perihelion;
-        private double semiMajorAxis;
-        private final double semiMinorAxis;
+        private final double[] semiMajorAxis;
+        private double[] eccentricities;
+        private double[] meanLongitudes;
+        private double[] inclinations;
+        private double[] longitudeAscendingNodes;
+        private double[] longitudesPerihelion;
 
-        private double inclination;
-
-        private double eccentricity;
-
-        private double orbitalSpeed;
-        private double orbitalPeriod;
-        private double orbitalDegreePerSec;
-        private double synodicPeriod;
-
-        public Builder(double aphelion, double perihelion) {
-            this.aphelion = aphelion;
-            this.perihelion = perihelion;
-            this.semiMajorAxis = ComputationUtils.arithmeticMean(aphelion, perihelion);
-            this.semiMinorAxis = ComputationUtils.geometricMean(aphelion, perihelion);
-
-            this.eccentricity = ComputationUtils.eccentricity(semiMajorAxis, semiMinorAxis);
+        public Builder(double[] semiMajorAxis) {
+            this.semiMajorAxis = semiMajorAxis;
         }
 
-        public Builder setInclination(double inclination) {
-            this.inclination = inclination;
+        public Builder setEccentricities(double[] eccentricities) {
+            this.eccentricities = eccentricities;
             return this;
         }
 
-        public Builder setOrbitalPeriod(boolean retrograde, boolean isEarth) {
-            this.orbitalPeriod = ComputationUtils.orbitalPeriod(semiMajorAxis);
-            this.synodicPeriod = ComputationUtils.synedicPeriod(this.orbitalPeriod);
-            this.orbitalSpeed = ComputationUtils.orbitalSpeed(semiMajorAxis, this.orbitalPeriod);
-            this.orbitalDegreePerSec = ComputationUtils.rotationDegree((!isEarth) ? this.synodicPeriod : this.orbitalPeriod);
+        public Builder setInclinations(double[] inclinations) {
+            this.inclinations = inclinations;
             return this;
         }
 
-        public Builder setOrbitalDegreePerSec(double orbitalDegreePerSec) {
-            this.orbitalDegreePerSec = orbitalDegreePerSec;
+        public Builder setLongitudeAscendingNodes(double[] longitudeAscendingNodes) {
+            this.longitudeAscendingNodes = longitudeAscendingNodes;
             return this;
         }
 
-        public Builder setSynediPeriod(double siderialPeriod)  {
-            this.synodicPeriod = ComputationUtils.synedicPeriod(siderialPeriod);
-            this.orbitalDegreePerSec = ComputationUtils.rotationDegree(this.synodicPeriod);
+        public Builder setMeanLongitudes(double[] meanLongitudes) {
+            this.meanLongitudes = meanLongitudes;
+            return this;
+        }
+
+        public Builder setLongitudesPerihelion(double[] longitudesPerihelion) {
+            this.longitudesPerihelion = longitudesPerihelion;
             return this;
         }
 

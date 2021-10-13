@@ -1,6 +1,6 @@
 package org.mahefa.data;
 
-import org.mahefa.common.enumerator.CelestialBodyCategory;
+import org.mahefa.common.constants.CelestialBodyCategory;
 
 import java.util.List;
 

@@ -1,57 +1,73 @@
 package org.mahefa.common.utils;
 
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TextureUtils {
 
     private static final String BASE_PATH_IMAGE_V2 = "/v2/planets";
 
-    private PhongMaterial phongMaterial;
-    private String colorMap;
-    private String specularMap;
-    private String bumpMap;
-    private String illuminationImage;
+    String color, diffuseMap, specularMap, bumpMap, illuminationMap;
 
     public TextureUtils() {
-        this.phongMaterial = new PhongMaterial();
     }
 
-    public PhongMaterial getPhongMaterial() {
-        Image diffuseMap = new Image(getClass().getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE_V2, this.colorMap)));
-        phongMaterial.setDiffuseMap(diffuseMap);
+    public void setColor(String color) {
+        this.color = color;
 
-        if(this.specularMap != null) {
-            Image specularMap = new Image(getClass().getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE_V2, this.specularMap)));
-            phongMaterial.setSpecularMap(specularMap);
-        }
+        this.diffuseMap = null;
+        this.specularMap = null;
+        this.bumpMap = null;
+        this.illuminationMap = null;
+    }
 
-        if(this.bumpMap != null) {
-            Image bumpMap = new Image(getClass().getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE_V2, this.bumpMap)));
-            phongMaterial.setBumpMap(bumpMap);
-        }
+    public void setMaps(String diffuseMap, String specularMap, String bumpMap, String illuminationMap) {
+        this.diffuseMap = diffuseMap;
+        this.specularMap = specularMap;
+        this.bumpMap = bumpMap;
+        this.illuminationMap = illuminationMap;
 
-        if(this.illuminationImage != null) {
-            Image IlluminationMap = new Image(getClass().getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE_V2, this.illuminationImage)));
-            phongMaterial.setSelfIlluminationMap(IlluminationMap);
-        }
+        this.color = null;
+    }
+
+    public PhongMaterial getPhongMaterial(String illuminationMap) {
+        Image IlluminationMapImg = new Image(getClass().getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE_V2, illuminationMap)));
+        PhongMaterial phongMaterial = new PhongMaterial();
+        phongMaterial.setSelfIlluminationMap(IlluminationMapImg);
 
         return phongMaterial;
     }
 
-    public void setColorMap(String colorMap) {
-        this.colorMap = colorMap;
-    }
+    public PhongMaterial getPhongMaterial() {
+        PhongMaterial phongMaterial = new PhongMaterial();
 
-    public void setSpecularMap(String specularMap) {
-        this.specularMap = specularMap;
-    }
+        if(color != null) {
+            phongMaterial.setDiffuseColor(Color.valueOf(color));
+        }
 
-    public void setBumpMap(String bumpMap) {
-        this.bumpMap = bumpMap;
-    }
+        if(diffuseMap != null) {
+            Image diffuseMapImg = new Image(getClass().getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE_V2, diffuseMap)));
+            phongMaterial.setDiffuseMap(diffuseMapImg);
+        }
 
-    public void setIlluminationImage(String illuminationImage) {
-        this.illuminationImage = illuminationImage;
+        if(specularMap != null) {
+            Image specularMapImg = new Image(getClass().getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE_V2, specularMap)));
+            phongMaterial.setSpecularMap(specularMapImg);
+        }
+
+        if(bumpMap != null) {
+            Image bumpMapImg = new Image(getClass().getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE_V2, bumpMap)));
+            phongMaterial.setBumpMap(bumpMapImg);
+        }
+
+        if(illuminationMap != null) {
+            Image IlluminationMapImg = new Image(getClass().getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE_V2, illuminationMap)));
+            phongMaterial.setSelfIlluminationMap(IlluminationMapImg);
+        }
+
+        return phongMaterial;
     }
 }

@@ -4,7 +4,8 @@ import javafx.application.Application;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.*;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
@@ -17,8 +18,6 @@ public class Main extends Application {
     private ConfigurableApplicationContext springContext;
     private Parent rootNode;
 
-    private static final String CSS_PATH = "/css/style.css";
-
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -28,15 +27,16 @@ public class Main extends Application {
         boolean is3DSupported = Platform.isSupported(ConditionalFeature.SCENE3D);
 
         if(!is3DSupported) {
-            System.out.println("Sorry, 3D is not supported in JavaFX on this platform.");
-            return;
+            throw new Exception("Sorry, 3D is not supported in JavaFX on this platform.");
         }
 
+        Application.setUserAgentStylesheet(Application.STYLESHEET_CASPIAN);
+
         Scene scene = new Scene(rootNode);
-        scene.getStylesheets().add(getClass().getResource(CSS_PATH).toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         scene.setFill(Color.BLACK);
 
-        stage.setTitle("Solar System");
+        stage.setTitle("Mahefa-S21");
         stage.setScene(scene);
         stage.setMinWidth(500);
         stage.setMinHeight(500);

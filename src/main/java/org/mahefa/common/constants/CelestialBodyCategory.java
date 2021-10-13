@@ -1,4 +1,4 @@
-package org.mahefa.common.enumerator;
+package org.mahefa.common.constants;
 
 public enum CelestialBodyCategory {
     PLANET,

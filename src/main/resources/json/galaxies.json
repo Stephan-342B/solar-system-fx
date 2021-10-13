@@ -1,20 +1,23 @@
 {
   "galaxies": [
     {
-      "designation": "milky way",
+      "designation": "Milky Way",
       "planets": [
         {
           "designation": "Mercury",
           "orbitalCharacteristic": {
-            "aphelion": 69817445,
-            "perihelion": 46001009,
-            "inclination": 3.38
+            "L": [ 252.250906, 149474.0722491, 0.00030397, 0.000000018 ],
+            "a": [ 0.387098310, 0.0, 0.0, 0.0 ],
+            "e": [ 0.20563175, 0.000020406, -0.0000000284, -0.00000000017 ],
+            "i": [ 7.004986, 0.0018215, -0.00001809, 0.000000053 ],
+            "Ω": [ 48.330893, 1.1861890, 0.00017587, 0.000000211 ],
+            "Π": [ 77.456119, 1.5564775, 0.00029589, 0.000000056 ]
           },
           "physicalCharacteristic": {
             "axialTilt": 0.08,
-            "siderealRotationPeriod": 58.646,
             "mass": 3.3011e23,
-            "radius": 2.4397e3
+            "radius": 2.4397e3,
+            "isRingSystem": false
           },
           "celestialBodies": [],
           "celestialBodyCategory": "PLANET"
@@ -22,16 +25,18 @@
         {
           "designation": "Venus",
           "orbitalCharacteristic": {
-            "aphelion": 108942780,
-            "perihelion": 107476170,
-            "inclination": 3.86
+            "L": [ 181.979801, 58519.2130302, 0.00031060, 0.000000015 ],
+            "a": [ 0.723329820, 0.0, 0.0, 0.0 ],
+            "e": [ 0.00677188, -0.000047766, 0.0000000975, 0.00000000044 ],
+            "i": [ 3.394662, 0.0010037, -0.00000088, -0.000000007 ],
+            "Ω": [ 76.679920, 0.9011190, 0.00040665, -0.000000080 ],
+            "Π": [ 131.563707, 1.4022188, -0.00107337, -0.000005315 ]
           },
           "physicalCharacteristic": {
             "axialTilt": 2.64,
-            "siderealRotationPeriod": -243.025,
-            "retrograde": true,
             "mass": 4.8675e24,
-            "radius": 6.0518e3
+            "radius": 6.0518e3,
+            "isRingSystem": false
           },
           "celestialBodies": [],
           "celestialBodyCategory": "PLANET"
@@ -39,33 +44,38 @@
         {
           "designation": "Earth",
           "orbitalCharacteristic": {
-            "aphelion": 152098233,
-            "perihelion": 147098291,
-            "inclination": 7.155
+            "L": [ 100.466449, 36000.7698231, 0.00030368, 0.000000021 ],
+            "a": [ 1.000001018, 0.0, 0.0, 0.0 ],
+            "e": [ 0.01670862, -0.000042037, -0.0000001236, 0.00000000004 ],
+            "i": [ 0.0, 0.0, 0.0, 0.0 ],
+            "Ω": [ 174.873174, -0.2410908, 0.00004067, -0.000001327 ],
+            "Π": [ 102.937348, 1.7195269, 0.00045962, 0.000000499 ]
           },
           "physicalCharacteristic": {
-            "axialTilt": 23.439,
-            "siderealRotationPeriod": 0.99726968,
-            "rotationVelocity": 0.4651,
+            "axialTilt": 23.4393,
             "mass": 5.97237e24,
-            "radius": 6.378137e3
+            "radius": 6.378137e3,
+            "isRingSystem": false
           },
           "celestialBodies": [
             {
               "designation": "Moon",
               "orbitalCharacteristic": {
-                "aphelion": 405400,
-                "perihelion": 362600,
-                "inclination": 5.145
+                "L": [ 0.0, 0.0, 0.0, 0.0 ],
+                "a": [ 0.002569479295, 0.0, 0.0, 0.0 ],
+                "e": [ 0.0, 0.0, 0.0, 0.0 ],
+                "i": [ 0.0, 0.0, 0.0, 0.0 ],
+                "Ω": [ 0.0, 0.0, 0.0, 0.0 ],
+                "Π": [ 0.0, 0.0, 0.0, 0.0 ]
               },
               "physicalCharacteristic": {
                 "axialTilt": 24,
-                "siderealRotationPeriod": 27.321661,
                 "mass": 7.342e22,
-                "radius": 1.7381e3
+                "radius": 1.7381e3,
+                "isRingSystem": false
               },
               "celestialBodies": [],
-              "celestialBodyCategory": "PLANET"
+              "celestialBodyCategory": "MOON"
             }
           ],
           "celestialBodyCategory": "PLANET"
@@ -73,16 +83,18 @@
         {
           "designation": "Mars",
           "orbitalCharacteristic": {
-            "aphelion": 249232432,
-            "perihelion": 206655215,
-            "inclination": 5.65
+            "L": [ 355.433275, 19141.6964746, 0.00031097, 0.000000015 ],
+            "a": [ 1.523679342, 0.0, 0.0, 0.0 ],
+            "e": [ 0.09340062, 0.000090483, -0.0000000806, -0.00000000035 ],
+            "i": [ 1.849726, -0.0006010, 0.00001276, -0.000000006 ],
+            "Ω": [ 49.558093, 0.7720923, 0.00001605, 0.000002325 ],
+            "Π": [ 336.060234, 1.8410331, 0.00013515, 0.000000318 ]
           },
           "physicalCharacteristic": {
             "axialTilt": 25.19,
-            "siderealRotationPeriod": 1.025957,
-            "rotationVelocity": 0.0,
             "mass": 6.4171e23,
-            "radius": 3.3962e3
+            "radius": 3.3962e3,
+            "isRingSystem": false
           },
           "celestialBodies": [],
           "celestialBodyCategory": "PLANET"
@@ -90,15 +102,18 @@
         {
           "designation": "Jupiter",
           "orbitalCharacteristic": {
-            "aphelion": 816001807,
-            "perihelion": 740679835,
-            "inclination": 6.09
+            "L": [ 34.351484, 3036.3027889, 0.00022374, 0.000000025 ],
+            "a": [ 5.202603191, 0.0000001913, 0.0, 0.0 ],
+            "e": [ 0.04849485, 0.000163244, -0.0000004719, -0.00000000197 ],
+            "i": [ 1.303270, -0.0054966, 0.00000465, -0.000000004 ],
+            "Ω": [ 100.464441, 1.0209550, 0.00040117, 0.000000569 ],
+            "Π": [ 14.331309, 1.6126668, 0.00103127, -0.000004569 ]
           },
           "physicalCharacteristic": {
             "axialTilt": 3.13,
-            "siderealRotationPeriod": 0.41354166,
             "mass": 1.8982e27,
-            "radius": 7.1492e4
+            "radius": 7.1492e4,
+            "isRingSystem": true
           },
           "celestialBodies": [],
           "celestialBodyCategory": "PLANET"
@@ -106,15 +121,18 @@
         {
           "designation": "Saturn",
           "orbitalCharacteristic": {
-            "aphelion": 1503509229,
-            "perihelion": 1349823615,
-            "inclination": 0.1
+            "L": [ 50.077471, 1223.5110141, 0.00051952, -0.000000003 ],
+            "a": [ 9.554909596, -0.0000021389, 0.0, 0.0 ],
+            "e": [ 0.05550862, -0.000346818, -0.0000006456, 0.00000000338 ],
+            "i": [ 2.488878, -0.0037363, -0.00001516, 0.000000089 ],
+            "Ω": [ 113.665524, 0.8770979, -0.00012067, -0.000002380 ],
+            "Π": [ 93.056787, 1.9637694, 0.000083757, 0.000004899 ]
           },
           "physicalCharacteristic": {
             "axialTilt": 26.73,
-            "siderealRotationPeriod": 0.44002314,
             "mass": 5.6834e26,
-            "radius": 6.0268e4
+            "radius": 6.0268e4,
+            "isRingSystem": true
           },
           "celestialBodies": [],
           "celestialBodyCategory": "PLANET"
@@ -122,16 +140,18 @@
         {
           "designation": "Uranus",
           "orbitalCharacteristic": {
-            "aphelion": 3006318143,
-            "perihelion": 2734998229,
-            "inclination": 6.48
+            "L": [ 314.055005, 429.8640561, 0.00030434, 0.000000026 ],
+            "a": [ 19.218446062, -0.0000000372, 0.00000000098, 0.0 ],
+            "e": [ 0.04629590, -0.000027337, 0.0000000790, 0.00000000025 ],
+            "i": [ 0.773196, 0.0007744, 0.00003749, -0.000000092 ],
+            "Ω": [ 74.005947, 0.5211258, 0.00133982, 0.000018516 ],
+            "Π": [ 173.005159, 1.4863784, 0.00021450, 0.000000433 ]
           },
           "physicalCharacteristic": {
             "axialTilt": 97.77,
-            "siderealRotationPeriod": -0.71833,
-            "retrograde": true,
             "mass": 8.6810e25,
-            "radius": 2.5559e4
+            "radius": 2.5559e4,
+            "isRingSystem": true
           },
           "celestialBodies": [],
           "celestialBodyCategory": "PLANET"
@@ -139,15 +159,18 @@
         {
           "designation": "Neptune",
           "orbitalCharacteristic": {
-            "aphelion": 4537039826,
-            "perihelion": 4459753056,
-            "inclination": 6.43
+            "L": [ 304.348665, 219.8833092, 0.00030926, 0.000000018 ],
+            "a": [ 30.110386869, -0.0000001663, 0.00000000069, 0.0 ],
+            "e": [ 0.00898809, 0.000006408, -0.0000000008, -0.00000000005 ],
+            "i": [ 1.769952, -0.0093082, -0.00000708, 0.000000028 ],
+            "Ω": [ 131.784057, 1.1022057, 0.00026006, -0.000000636 ],
+            "Π": [ 48.123691, 1.4262677, 0.00037918, -0.000000003 ]
           },
           "physicalCharacteristic": {
             "axialTilt": 28.32,
-            "siderealRotationPeriod": 0.6713,
             "mass": 1.02413e26,
-            "radius": 2.4764e4
+            "radius": 2.4764e4,
+            "isRingSystem": true
           },
           "celestialBodies": [],
           "celestialBodyCategory": "PLANET"
@@ -157,15 +180,18 @@
         {
           "designation": "Sun",
           "orbitalCharacteristic": {
-            "aphelion": 0.0,
-            "perihelion": 0.0,
-            "inclination": 6.43
+            "L": [ 0.0, 0.0, 0.0, 0.0 ],
+            "a": [ 0.0, 0.0, 0.0, 0.0 ],
+            "e": [ 0.0, 0.0, 0.0, 0.0 ],
+            "i": [ 6.43, 0.0, 0.0, 0.0 ],
+            "Ω": [ 0.0, 0.0, 0.0, 0.0 ],
+            "Π": [ 0.0, 0.0, 0.0, 0.0 ]
           },
           "physicalCharacteristic": {
             "axialTilt": 0.01,
-            "siderealRotationPeriod": 0.001,
             "mass": 1.99e+0,
-            "radius": 6.96342e5
+            "radius": 6.96342e5,
+            "isRingSystem": true
           },
           "celestialBodies": [],
           "celestialBodyCategory": "STAR"

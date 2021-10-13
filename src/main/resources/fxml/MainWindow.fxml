@@ -17,23 +17,35 @@
                 <Region />
             </root>
         </SubScene>
-        <HBox AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="10">
+        <VBox fx:id="vBox" AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="5">
+            <padding>
+                <Insets top="5" left="12" bottom="10" right="12"></Insets>
+            </padding>
+            <Label fx:id="currentDate" styleClass="date"></Label>
+            <Label fx:id="currentTime" styleClass="timer"></Label>
+        </VBox>
+        <HBox fx:id="hBox" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="10">
             <padding>
                 <Insets top="15" left="12" bottom="15" right="12"></Insets>
             </padding>
-            <Button text="Planet view" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button text="SOLAR SYSTEM" onAction="#enterOuterView" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
                 <graphic>
-                    <Region styleClass="bt-planet"></Region>
+                    <Region styleClass="icon-solar-system"></Region>
                 </graphic>
             </Button>
-            <Button text="Inner solar system" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button fx:id="innerView" onAction="#enterInnerView" text="INNER SOLAR SYSTEM" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
                 <graphic>
-                    <Region styleClass="bt-inner-solar-system"></Region>
+                    <Region styleClass="icon-inner-solar-system"></Region>
                 </graphic>
             </Button>
-            <Button text="Outer solar system" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button fx:id="outerView" onAction="#enterOuterView" text="OUTER SOLAR SYSTEM" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
                 <graphic>
-                    <Region styleClass="bt-outer-solar-system"></Region>
+                    <Region styleClass="icon-solar-system"></Region>
+                </graphic>
+            </Button>
+            <Button fx:id="planetView" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+                <graphic>
+                    <Region styleClass="icon-planet"></Region>
                 </graphic>
             </Button>
         </HBox>

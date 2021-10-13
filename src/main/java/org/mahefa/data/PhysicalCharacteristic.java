@@ -1,25 +1,17 @@
 package org.mahefa.data;
 
-import org.mahefa.common.utils.ComputationUtils;
-
 public class PhysicalCharacteristic {
 
     private final double radius;
     private final double mass;
     private final double axialTilt;
-
-    private final double rotationDegreePerSec;
-    private double siderealRotationPeriod;
-    private final double equatorialRotationVelocity;
+    private final boolean isRingSystem;
 
     private PhysicalCharacteristic(Builder builder) {
         this.radius = builder.radius;
         this.mass = builder.mass;
         this.axialTilt = builder.axialTilt;
-
-        this.rotationDegreePerSec = builder.rotationDegreePerSec;
-        this.siderealRotationPeriod = builder.siderealRotationPeriod;
-        this.equatorialRotationVelocity = builder.equatorialRotationVelocity;
+        this.isRingSystem = builder.isRingSystem;
     }
 
     public double getRadius() {
@@ -34,33 +26,19 @@ public class PhysicalCharacteristic {
         return axialTilt;
     }
 
-    public double getRotationDegreePerSec() {
-        return rotationDegreePerSec;
-    }
-
-    public double getSiderealRotationPeriod() {
-        return siderealRotationPeriod;
-    }
-
-    public double getEquatorialRotationVelocity() {
-        return equatorialRotationVelocity;
+    public boolean isRingSystem() {
+        return isRingSystem;
     }
 
     public static class Builder {
-
         private final double radius;
         private final double mass;
         private double axialTilt;
-
-        private double rotationDegreePerSec;
-        private double siderealRotationPeriod;
-        private final double equatorialRotationVelocity;
+        private boolean isRingSystem = false;
 
         public Builder(double radius, double mass) {
             this.radius = radius;
             this.mass = mass;
-
-            this.equatorialRotationVelocity = ComputationUtils.rotationVelocity(radius, siderealRotationPeriod);
         }
 
         public Builder setAxialTilt(double axialTilt) {
@@ -68,9 +46,8 @@ public class PhysicalCharacteristic {
             return this;
         }
 
-        public Builder setSiderealRotationPeriod(double siderealRotationPeriod) {
-            this.siderealRotationPeriod = siderealRotationPeriod;
-            this.rotationDegreePerSec = ComputationUtils.rotationDegree(siderealRotationPeriod);
+        public Builder isRingSystem(boolean isRingSystem) {
+            this.isRingSystem = isRingSystem;
             return this;
         }
 

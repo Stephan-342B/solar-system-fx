@@ -1,99 +1,170 @@
 package org.mahefa.controller;
 
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import org.mahefa.data.*;
-import org.mahefa.service.application.GalaxyApplication;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.Sphere;
+import javafx.util.Duration;
+import org.mahefa.common.constants.SolarSystemTextures;
+import org.mahefa.common.utils.TextureUtils;
+import org.mahefa.data.Xform;
+import org.mahefa.data.javafx.Camera;
+import org.mahefa.service.application.javafx.object.galaxy.GalaxyAppService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
 public class MainWindowController {
 
     @FXML
-    private AnchorPane anchorPane;
+    AnchorPane anchorPane;
 
     @FXML
-    private SubScene subScene;
+    HBox hBox;
+
+    @FXML
+    SubScene subScene;
+
+    @FXML
+    Button planetView, innerView, outerView;
+
+    @FXML
+    Label currentDate, currentTime;
 
     @Autowired
-    private GalaxyApplication galaxyApplication;
+    GalaxyAppService galaxyAppService;
+    @Autowired TextureUtils textureUtils;
+
+    @Value("${mouse.speed}") double mouseSpeed;
+    @Value("${rotation.speed}") double rotationSpeed;
+    @Value("${track.speed}") double trackSpeed;
+    @Value("${date.format}") String dateFormat;
+    @Value("${time.format}") String timFormat;
+
+    @Value("${camera.near.clip: 0.0}") double nearClip;
+    @Value("${camera.far.clip}") double farClip;
+    @Value("${camera.initial.distance: 0.0}") double initialDistance;
+    @Value("${camera,initial.x.angle: 0.0}") double initialXAngle;
+    @Value("${camera.initial.y.angle: 0.0}") double initialYAngle;
 
     final Group root = new Group();
     final Xform world = new Xform();
-    final PerspectiveCamera camera = new PerspectiveCamera(true);
-    final Xform cameraXform = new Xform(Xform.RotateOrder.ZYX);
-    final Xform cameraXform2 = new Xform();
-    final Xform cameraXform3 = new Xform();
 
     private double mouseOldX, mouseOldY, mousePosY, mousePosX, deltaX, deltaY;
-    private Node currentPivotNode;
-
-    private static final double CAMERA_NEAR_CLIP = 0.01;
-    private static final double CAMERA_FAR_CLIP = 10000000.0;
-    private static final double CAMERA_INITIAL_DISTANCE = -1800;
-    private static final double CAMERA_INITIAL_X_ANGLE = 0.0;
-    private static final double CAMERA_INITIAL_Y_ANGLE = 0.0;
-
-    private static final double MOUSE_SPEED = 0.6;
-    private static final double ROTATION_SPEED = 3.0;
-    private static final double TRACK_SPEED = 0.3;
-    private static final double SHIFT_MULTIPLIER = 10.0;
+    private Node currentPivot;
+    private double currentPivotRadius;
+    private Camera camera;
 
     @FXML
     private void initialize() {
-        root.getChildren().addAll(world);
+        // Hide planet view and inner view by default
+        planetView.setVisible(false);
+        planetView.setManaged(false);
+        planetView.managedProperty().bind(planetView.visibleProperty());
+
+        outerView.setVisible(false);
+        outerView.setManaged(false);
+        outerView.managedProperty().bind(outerView.visibleProperty());
+        innerView.managedProperty().bind(innerView.visibleProperty());
+
+        camera = new Camera(nearClip, farClip, initialDistance, initialXAngle, initialYAngle);
+        root.getChildren().addAll(world, camera.build());
         root.setDepthTest(DepthTest.ENABLE);
 
-        buildCamera();
-        galaxyApplication.buildGalaxy(world);
+        showCurrentDateTime();
+        world.getChildren().add(galaxyAppService.buildGalaxy());
 
         subScene.setRoot(root);
-        subScene.setCamera(camera);
+        subScene.setCamera(camera.getPerspectiveCamera());
 
         subScene.widthProperty().bind(anchorPane.widthProperty());
         subScene.heightProperty().bind(anchorPane.heightProperty());
 
-        nodeEventControl(galaxyApplication.getNodes());
+        // Init event control
+        nodeEventControl(galaxyAppService.getNodes());
         initEventControls();
     }
 
-    private void buildCamera() {
-        root.getChildren().add(cameraXform);
-        cameraXform.getChildren().add(cameraXform2);
-        cameraXform2.getChildren().add(cameraXform3);
-        cameraXform3.getChildren().add(camera);
+    private void showCurrentDateTime() {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, e -> {
+            LocalTime localTime = LocalTime.now();
+            LocalDate localDate = LocalDate.now();
 
-        camera.setNearClip(CAMERA_NEAR_CLIP);
-        camera.setFarClip(CAMERA_FAR_CLIP);
-        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-        //camera.setFieldOfView(180);
-        cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
-        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+            currentDate.setText(localDate.format(DateTimeFormatter.ofPattern(dateFormat)));
+            currentTime.setText(localTime.format(DateTimeFormatter.ofPattern(timFormat)));
+        }), new KeyFrame(Duration.seconds(1)));
+
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
+    @FXML
+    private void enterInnerView(ActionEvent event) {
+        innerView.setVisible(false);
+        planetView.setVisible(false);
+        outerView.setVisible(true);
+    }
+
+    @FXML
+    private void enterOuterView(ActionEvent event) {
+        outerView.setVisible(false);
+        planetView.setVisible(false);
+        innerView.setVisible(true);
+
+        camera.reset();
+
+        resetPivot();
     }
 
     private void nodeEventControl(List<Node> nodes) {
         if(nodes != null && !nodes.isEmpty()) {
             nodes.forEach(node -> {
                 node.setOnMouseClicked(event -> {
-                    currentPivotNode = node;
+                    innerView.setVisible(false);
+                    outerView.setVisible(false);
+                    planetView.setVisible(true);
+                    planetView.setText(node.getId().toUpperCase());
 
-                    camera.setTranslateZ(-50);
+                    // Reset previous pivot
+                    resetPivot();
+
+                    // Load texture
+                    textureUtils.setMaps(SolarSystemTextures.getDiffuseMap(node.getId().toLowerCase()), null, null, null);
+                    ((Sphere)node).setMaterial(textureUtils.getPhongMaterial());
+
+                    // Lock on pivot
+                    currentPivot = node;
+                    currentPivotRadius = ((Sphere)node).getRadius();
+
+                    ((Sphere)node).setRadius(50.0);
+
+                    camera.getPerspectiveCamera().setTranslateZ(-200.0);
 
                     AnimationTimer animationTimer = new AnimationTimer() {
                         @Override
                         public void handle(long now) {
+                            Xform cameraXform = camera.getCameraXform();
+
                             // Lock camera on pivot's position
-                            cameraXform.t.setX(currentPivotNode.getTranslateX());
-                            cameraXform.t.setY(currentPivotNode.getTranslateY());
-                            cameraXform.t.setZ(currentPivotNode.getTranslateZ());
+                            cameraXform.t.setX(currentPivot.getTranslateX());
+                            cameraXform.t.setY(currentPivot.getTranslateY());
+                            cameraXform.t.setZ(currentPivot.getTranslateZ());
                         }
                     };
 
@@ -109,11 +180,11 @@ public class MainWindowController {
 
     private void initEventControls() {
         subScene.addEventHandler(ScrollEvent.SCROLL, event -> {
+            PerspectiveCamera perspectiveCamera = camera.getPerspectiveCamera();
             double delta = event.getDeltaY();
-            double z = camera.getTranslateZ();
-            double newZ = z + delta * MOUSE_SPEED;
+            double z = perspectiveCamera.getTranslateZ();
 
-            camera.setTranslateZ(newZ);
+            perspectiveCamera.setTranslateZ(z + delta * mouseSpeed);
 
             // TODO: update scale
         });
@@ -133,13 +204,36 @@ public class MainWindowController {
             deltaX = mousePosX - mouseOldX;
             deltaY = mousePosY - mouseOldY;
 
+            Xform cameraXform = camera.getCameraXform();
+            Xform cameraXform2 = camera.getCameraXform2();
+
             if(event.isPrimaryButtonDown()) {
-                cameraXform.ry.setAngle(cameraXform.ry.getAngle() + deltaX * MOUSE_SPEED * ROTATION_SPEED);
-                cameraXform.rx.setAngle(cameraXform.rx.getAngle() + deltaY * MOUSE_SPEED * ROTATION_SPEED);
+                cameraXform.ry.setAngle(cameraXform.ry.getAngle() + deltaX * mouseSpeed * rotationSpeed);
+                cameraXform.rx.setAngle(cameraXform.rx.getAngle() + deltaY * mouseSpeed * rotationSpeed);
             } else if(event.isSecondaryButtonDown()) {
-                cameraXform2.t.setX(cameraXform2.t.getX() + deltaX * MOUSE_SPEED * TRACK_SPEED);
-                cameraXform2.t.setY(cameraXform2.t.getY() + deltaY * MOUSE_SPEED * TRACK_SPEED);
+                cameraXform2.t.setX(cameraXform2.t.getX() + deltaX * mouseSpeed * trackSpeed);
+                cameraXform2.t.setY(cameraXform2.t.getY() + deltaY * mouseSpeed * trackSpeed);
             }
         });
+    }
+
+    /**
+     * Reset pivot
+     */
+    void resetPivot() {
+        if(currentPivot != null) {
+            final String id = currentPivot.getId();
+
+            if(id.equalsIgnoreCase("sun")) {
+                final String diffuseMap = SolarSystemTextures.getDiffuseMap(id.toLowerCase());
+                textureUtils.setMaps(diffuseMap, null, null, diffuseMap);
+            } else {
+                textureUtils.setColor(SolarSystemTextures.getColor(id.toLowerCase()));
+            }
+
+            ((Sphere) currentPivot).setMaterial(textureUtils.getPhongMaterial());
+            ((Sphere) currentPivot).setRadius(currentPivotRadius);
+            currentPivot = null;
+        }
     }
 }

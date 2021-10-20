@@ -2,15 +2,17 @@ package org.mahefa.data.meeus.jean;
 
 public class Coordinates {
 
-    private double x = 0;
-    private double y = 0;
-    private double z = 0;
+    private String designation = "sun";
+
+    private double x = 0d;
+    private double y = 0d;
+    private double z = 0d;
 
     private double Δ;
     private double τ;
 
-    private double rightAscension;
-    private double declination;
+    private double rightAscension = 0d;
+    private double declination = 0d;
 
     private double L;
     private double B;
@@ -23,6 +25,14 @@ public class Coordinates {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
     }
 
     public double getX() {

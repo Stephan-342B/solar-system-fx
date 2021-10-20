@@ -1,4 +1,4 @@
-package org.mahefa.data;
+package org.mahefa.data.oracle;
 
 import javafx.scene.Group;
 import javafx.scene.transform.Rotate;
@@ -8,7 +8,7 @@ import javafx.scene.transform.Translate;
 public class Xform extends Group {
 
     public enum RotateOrder {
-        XYZ, XZY, YXZ, YZX, ZXY, ZYX
+        X, Y, XY, XZ, YZ, XYZ, XZY, YXZ, YZX, ZXY, ZYX
     }
 
     public Translate t  = new Translate();
@@ -31,6 +31,21 @@ public class Xform extends Group {
         super();
         // choose the order of rotations based on the rotateOrder
         switch (rotateOrder) {
+            case X:
+                getTransforms().addAll(t, p, rx, s, ip);
+                break;
+            case Y:
+                getTransforms().addAll(t, p, ry, s, ip);
+                break;
+            case XY:
+                getTransforms().addAll(t, p, ry, rx, s, ip);
+                break;
+            case XZ:
+                getTransforms().addAll(t, p, rz, rx, s, ip);
+                break;
+            case YZ:
+                getTransforms().addAll(t, p, rz, ry, s, ip);
+                break;
             case XYZ:
                 getTransforms().addAll(t, p, rz, ry, rx, s, ip);
                 break;
@@ -45,6 +60,9 @@ public class Xform extends Group {
                 break;
             case ZYX:
                 getTransforms().addAll(t, p, rx, ry, rz, s, ip);
+                break;
+            case XZY:
+                getTransforms().addAll(t, p, ry, rz, rx, s, ip);
                 break;
         }
     }

@@ -80,6 +80,7 @@ public class CoordinatesAppServiceImpl implements CoordinatesAppService {
 
         coordinates = getCoordinates(L, B, R, L0, B0, R0);
 
+        coordinates.setDesignation(designation);
         coordinates.setL(AstroMath.round(Angle.normalize(Math.toDegrees(L)), 1e6));
         coordinates.setB(AstroMath.round(Math.toDegrees(B), 1e6));
         coordinates.setB(AstroMath.round(R, 1e6));

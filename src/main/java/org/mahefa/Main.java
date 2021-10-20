@@ -36,11 +36,11 @@ public class Main extends Application {
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         scene.setFill(Color.BLACK);
 
-        stage.setTitle("Mahefa-S21");
+        stage.setTitle("Solar System Visualizer");
         stage.setScene(scene);
         stage.setMinWidth(500);
         stage.setMinHeight(500);
-        stage.setMaximized(true);
+        stage.setMaximized(false);
 
         stage.show();
     }

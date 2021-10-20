@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.mahefa.controller.MainWindowController"
             fx:id="anchorPane" prefHeight="800.0" prefWidth="800.0">
@@ -17,6 +19,8 @@
                 <Region />
             </root>
         </SubScene>
+
+        <!--    Date and time are placed here    -->
         <VBox fx:id="vBox" AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="5">
             <padding>
                 <Insets top="5" left="12" bottom="10" right="12"></Insets>
@@ -24,6 +28,19 @@
             <Label fx:id="currentDate" styleClass="date"></Label>
             <Label fx:id="currentTime" styleClass="timer"></Label>
         </VBox>
+
+        <!--    Show astronomical coordinates of the major planet at the current time    -->
+        <TableView fx:id="tableView" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" visible="false" managed="false" prefHeight="85">
+            <placeholder>
+                <Label text="No computed data found"/>
+            </placeholder>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+            <columns />
+        </TableView>
+
+        <!--    Control buttons    -->
         <HBox fx:id="hBox" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="10">
             <padding>
                 <Insets top="15" left="12" bottom="15" right="12"></Insets>
@@ -38,14 +55,19 @@
                     <Region styleClass="icon-inner-solar-system"></Region>
                 </graphic>
             </Button>
-            <Button fx:id="outerView" onAction="#enterOuterView" text="OUTER SOLAR SYSTEM" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button fx:id="outerView" visible="false" managed="false" onAction="#enterOuterView" text="OUTER SOLAR SYSTEM" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
                 <graphic>
                     <Region styleClass="icon-solar-system"></Region>
                 </graphic>
             </Button>
-            <Button fx:id="planetView" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button fx:id="planetView" visible="false" managed="false" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
                 <graphic>
                     <Region styleClass="icon-planet"></Region>
+                </graphic>
+            </Button>
+            <Button fx:id="astronomicalCoordinatesView" onAction="#showAstronomicalCoordinates" text="ASTRONOMICAL COORDINATES" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+                <graphic>
+                    <Region styleClass="icon-coordinates"></Region>
                 </graphic>
             </Button>
         </HBox>

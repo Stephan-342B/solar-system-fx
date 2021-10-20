@@ -1,6 +1,11 @@
 * {
     /* Global variables */
-    -color-white: white;
-    -bt-icon-height: 20;
-    -bt-icon-width: 40;
+    -color-black: #000000;
+    -color-white: #FFFFFF;
+    -color-red: #97081a;
+    -color-blue: #0086AC;
+    -color-yellow: #FEDA15;
+    -color-green: #59981A;
+    -bt-icon-height: 25;
+    -bt-icon-width: 28;
 }

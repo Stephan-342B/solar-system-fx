@@ -23,16 +23,18 @@ public class MotionAppServiceServiceImpl implements MotionAppService {
     double scaleDistanceValue;
 
     @Override
-    public void rotate(Node node, final double degreePerSecond) {
-        AnimationTimer rotationAnimationTimer = new AnimationTimer() {
+    public AnimationTimer rotate(Node node, final double degreePerSecond) {
+        AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                node.rotateProperty().set(node.getRotate() + degreePerSecond * ROTATION_SPEED * -1);
+                node.rotateProperty().set(node.getRotate() + degreePerSecond);
                 node.setRotationAxis(new Point3D(0, 1, 0));
             }
         };
 
-        rotationAnimationTimer.start();
+        animationTimer.start();
+
+        return animationTimer;
     }
 
     /**

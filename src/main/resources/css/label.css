@@ -1,5 +1,5 @@
-.celestial-body-name, .label {
+Label {
     -fx-opacity: 100%;
     -fx-font-size: 12px;
-    -fx-font-weight: bold;
+    -fx-font-style: normal;
 }

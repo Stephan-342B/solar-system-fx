@@ -21,4 +21,13 @@ public final class AngleImpl {
     public static double normalize(double angle) {
         return (angle >= 0.0 && angle <= 360.0) ? angle : angle - Math.floor(angle / 360.0) * 360;
     }
+
+    public static String convertDecimalDegreeToDMS(final double degree) {
+        final int d = (int) degree;
+        final double md = (degree - d) * 60;
+        final int m = (int) md;
+        final int s = (int) ((md - m) * 60);
+
+        return String.format("%s° %s' %s\"", d, m, s);
+    }
 }

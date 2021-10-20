@@ -2,6 +2,7 @@
 @import "label.css";
 @import "button.css";
 @import "date-time.css";
+@import "table-view.css";
 
 .root * {
     -fx-font-smoothing-type: lcd;

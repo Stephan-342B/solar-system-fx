@@ -57,4 +57,13 @@ public final class Angle {
     public static double normalize(double angle) {
         return AngleImpl.normalize(angle);
     }
+
+    /**
+     *
+     * @param degree
+     * @return
+     */
+    public static String convertDecimalDegreeToDMS(final double degree) {
+        return AngleImpl.convertDecimalDegreeToDMS(degree);
+    }
 }

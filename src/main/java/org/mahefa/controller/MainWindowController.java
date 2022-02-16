@@ -20,7 +20,6 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
 import javafx.util.Duration;
 import org.mahefa.common.constants.CelestialBodyCategory;
-import org.mahefa.common.constants.SolarSystemTextures;
 import org.mahefa.common.constants.TabColumns;
 import org.mahefa.common.utils.TextureUtils;
 import org.mahefa.common.utils.calendar.julian_day.JulianDay;
@@ -239,14 +238,7 @@ public class MainWindowController {
                     node.setCacheHint(CacheHint.ROTATE);
 
                     // Load texture
-                    ((Sphere)node).setMaterial(
-                            TextureUtils.get(
-                                    SolarSystemTextures.getDiffuseMap(node.getId().toLowerCase()),
-                                    SolarSystemTextures.getSpecularMap(node.getId().toLowerCase()),
-                                    SolarSystemTextures.getBumpMap(node.getId().toLowerCase()),
-                                    SolarSystemTextures.getBumpMap(node.getId().toLowerCase())
-                            )
-                    );
+                    ((Sphere)node).setMaterial(TextureUtils.getTexture(node.getId().toLowerCase()));
 
                     // Lock on pivot
                     camera.lock(currentPivot, node);
@@ -304,14 +296,9 @@ public class MainWindowController {
         if(currentPivot != null) {
             final CelestialBody celestialBody = (CelestialBody) currentPivot.getUserData();
             final String id = celestialBody.getDesignation().toLowerCase();
-            PhongMaterial phongMaterial;
-
-            if(celestialBody.getCelestialBodyCategory().equals(CelestialBodyCategory.STAR)) {
-                final String diffuseMap = SolarSystemTextures.getDiffuseMap(id);
-                phongMaterial = TextureUtils.getTexture(diffuseMap, diffuseMap);
-            } else {
-                phongMaterial = TextureUtils.getTextureColor(SolarSystemTextures.getColor(id));
-            }
+            PhongMaterial phongMaterial = (celestialBody.getCelestialBodyCategory().equals(CelestialBodyCategory.STAR))
+                    ? TextureUtils.getTexture(id)
+                    : TextureUtils.getTextureFromColor(id);
 
             currentPivot.setCacheHint(CacheHint.SPEED);
             ((Sphere) currentPivot).setMaterial(phongMaterial);

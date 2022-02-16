@@ -1,106 +1,150 @@
 package org.mahefa.data.view;
 
+import javafx.beans.property.SimpleStringProperty;
+import org.mahefa.common.utils.math.astronomy.AstroMath;
+import org.mahefa.common.utils.math.geometry.angle.Angle;
+
 public class DataView {
 
-    private Data sun;
-    private Data mercury;
-    private Data venus;
-    private Data mars;
-    private Data jupiter;
-    private Data saturn;
-    private Data uranus;
-    private Data neptune;
+    private final SimpleStringProperty designation;
+    private final SimpleStringProperty ra;
+    private final SimpleStringProperty decl;
+    private final SimpleStringProperty magnitude;
+    private final SimpleStringProperty size;
+    private final SimpleStringProperty phase;
+    private final SimpleStringProperty rise;
+    private final SimpleStringProperty transit;
+    private final SimpleStringProperty set;
 
-    public DataView() {
+    public DataView(String designation, Double ra, Double decl) {
+        this.designation = new SimpleStringProperty(designation);
+        this.ra = new SimpleStringProperty(Angle.convertDecimalDegreeToDMS(ra));
+        this.decl = new SimpleStringProperty(String.format("%s°", AstroMath.round(decl, 1e2)));
+        this.magnitude = new SimpleStringProperty("0.0");
+        this.size = new SimpleStringProperty("0.0\'");
+        this.phase = new SimpleStringProperty("0%");
+        this.rise = new SimpleStringProperty("00:00 am/pm");
+        this.transit = new SimpleStringProperty("00:00 am/pm");
+        this.set = new SimpleStringProperty("00:00 am/pm");
     }
 
-    public Data getSun() {
-        return sun;
+    public DataView(String designation, Double ra, Double decl, String magnitude, String size, String phase, String rise, String transit, String set) {
+        this.designation = new SimpleStringProperty(designation);
+        this.ra = new SimpleStringProperty(Angle.convertDecimalDegreeToDMS(ra));
+        this.decl = new SimpleStringProperty(String.format("%s°", AstroMath.round(decl, 1e2)));
+        this.magnitude = new SimpleStringProperty(magnitude);
+        this.size = new SimpleStringProperty(null);
+        this.phase = new SimpleStringProperty(phase);
+        this.rise = new SimpleStringProperty(rise);
+        this.transit = new SimpleStringProperty(transit);
+        this.set = new SimpleStringProperty(set);
     }
 
-    public void setSun(Data sun) {
-        this.sun = sun;
+    public String getDesignation() {
+        return designation.get().toUpperCase();
     }
 
-    public Data getMercury() {
-        return mercury;
+    public SimpleStringProperty designationProperty() {
+        return designation;
     }
 
-    public void setMercury(Data mercury) {
-        this.mercury = mercury;
+    public void setDesignation(String designation) {
+        this.designation.set(designation);
     }
 
-    public Data getVenus() {
-        return venus;
+    public String getRa() {
+        return ra.get();
     }
 
-    public void setVenus(Data venus) {
-        this.venus = venus;
+    public SimpleStringProperty raProperty() {
+        return ra;
     }
 
-    public Data getMars() {
-        return mars;
+    public void setRa(String ra) {
+        this.ra.set(ra);
     }
 
-    public void setMars(Data mars) {
-        this.mars = mars;
+    public String getDecl() {
+        return decl.get();
     }
 
-    public Data getJupiter() {
-        return jupiter;
+    public SimpleStringProperty declProperty() {
+        return decl;
     }
 
-    public void setJupiter(Data jupiter) {
-        this.jupiter = jupiter;
+    public void setDecl(String decl) {
+        this.decl.set(decl);
     }
 
-    public Data getSaturn() {
-        return saturn;
+    public String getMagnitude() {
+        return magnitude.get();
     }
 
-    public void setSaturn(Data saturn) {
-        this.saturn = saturn;
+    public SimpleStringProperty magnitudeProperty() {
+        return magnitude;
     }
 
-    public Data getUranus() {
-        return uranus;
+    public void setMagnitude(String magnitude) {
+        this.magnitude.set(magnitude);
     }
 
-    public void setUranus(Data uranus) {
-        this.uranus = uranus;
+    public String getSize() {
+        return size.get();
     }
 
-    public Data getNeptune() {
-        return neptune;
+    public SimpleStringProperty sizeProperty() {
+        return size;
     }
 
-    public void setNeptune(Data neptune) {
-        this.neptune = neptune;
+    public void setSize(String size) {
+        this.size.set(size);
     }
 
-    public class Data {
-        private String ra;
-        private String decl;
+    public String getPhase() {
+        return phase.get();
+    }
 
-        public Data(String ra, String decl) {
-            this.ra = ra;
-            this.decl = decl;
-        }
+    public SimpleStringProperty phaseProperty() {
+        return phase;
+    }
 
-        public String getRa() {
-            return ra;
-        }
+    public void setPhase(String phase) {
+        this.phase.set(phase);
+    }
 
-        public void setRa(String ra) {
-            this.ra = ra;
-        }
+    public String getRise() {
+        return rise.get();
+    }
 
-        public String getDecl() {
-            return decl;
-        }
+    public SimpleStringProperty riseProperty() {
+        return rise;
+    }
 
-        public void setDecl(String decl) {
-            this.decl = decl;
-        }
+    public void setRise(String rise) {
+        this.rise.set(rise);
+    }
+
+    public String getTransit() {
+        return transit.get();
+    }
+
+    public SimpleStringProperty transitProperty() {
+        return transit;
+    }
+
+    public void setTransit(String transit) {
+        this.transit.set(transit);
+    }
+
+    public String getSet() {
+        return set.get();
+    }
+
+    public SimpleStringProperty setProperty() {
+        return set;
+    }
+
+    public void setSet(String set) {
+        this.set.set(set);
     }
 }

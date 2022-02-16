@@ -33,14 +33,14 @@ public class Main extends Application {
         Application.setUserAgentStylesheet(Application.STYLESHEET_CASPIAN);
 
         Scene scene = new Scene(rootNode);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/compiled-css/style.css").toExternalForm());
         scene.setFill(Color.BLACK);
 
         stage.setTitle("Solar System Visualizer");
         stage.setScene(scene);
-        stage.setMinWidth(500);
-        stage.setMinHeight(500);
-        stage.setMaximized(false);
+        stage.setMinWidth(800);
+        stage.setMinHeight(800);
+        stage.setMaximized(true);
 
         stage.show();
     }

@@ -64,25 +64,25 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.xmlunit:xmlunit-core:2.6.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: javax.xml.bind:jaxb-api:2.3.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: javax.activation:javax.activation-api:1.2.0" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:linux:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:linux:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:linux:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:linux:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:11.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:linux:11.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:linux:19-ea+2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:19-ea+2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:linux:19-ea+2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:linux:19-ea+2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:19-ea+2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:linux:19-ea+2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:linux:19-ea+2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:19-ea+2" level="project" />
     <orderEntry type="library" name="Maven: org.fxyz3d:fxyz3d:0.5.4" level="project" />
     <orderEntry type="library" name="Maven: eu.mihosoft.vrl.jcsg:jcsg:0.5.7" level="project" />
     <orderEntry type="library" name="Maven: eu.mihosoft.vvecmath:vvecmath:0.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.orbisgis:poly2tri-core:0.1.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-fxml:15.0.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-swing:15.0.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.openjfx:javafx-swing:linux:15.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20210307" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.7.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.7.4" level="project" />
+    <orderEntry type="library" name="Maven: javax.vecmath:vecmath:1.5.2" level="project" />
   </component>
 </module>

@@ -1,0 +1,51 @@
+.description-box {
+    -fx-background-color: -color-black;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-opacity: 0.6;
+
+    > .title_description {
+        -fx-font-size: 28px;
+        -fx-font-weight: bold;
+        -fx-text-fill: -color-white!important;
+        -fx-border-color: -color-white;
+        -fx-border-width: 0 0 20 0px;
+        -fx-border-insets: 80 12 5 12px;
+        -fx-background-insets: 80 12 5 12px;
+    }
+
+    > .imgPane {
+        -fx-background-repeat: stretch;
+        -fx-background-position: center center;
+        -fx-border-insets: 80 12 5 12px;
+        -fx-background-insets: 80 12 5 12px;
+
+        &.mercury {
+            -fx-background-image: url("/v2/planets/mercury/mercury.jpg");
+        }
+
+        &.venus {
+            -fx-background-image: url("/v2/planets/venus/venus.jpg");
+        }
+
+        &.earth {
+            -fx-background-image: url("/v2/planets/earth/earth.jpg");
+        }
+
+        &.mars {
+            -fx-background-image: url("/v2/planets/mars/mars.jpg");
+        }
+
+        &.jupiter {
+            -fx-background-image: url("/v2/planets/jupiter/jupiter.jpg");
+        }
+
+        &.saturn {
+            -fx-background-image: url("/v2/planets/saturn/saturn.jpg");
+        }
+
+        &.uranus {
+            -fx-background-image: url("/v2/planets/uranus/uranus.jpg");
+        }
+    }
+}

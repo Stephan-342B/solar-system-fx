@@ -8,7 +8,7 @@ import javafx.scene.transform.Translate;
 public class Xform extends Group {
 
     public enum RotateOrder {
-        X, Y, XY, XZ, YZ, XYZ, XZY, YXZ, YZX, ZXY, ZYX
+        X, Y, XY, YX, XZ, YZ, XYZ, XZY, YXZ, YZX, ZXY, ZYX
     }
 
     public Translate t  = new Translate();
@@ -39,6 +39,9 @@ public class Xform extends Group {
                 break;
             case XY:
                 getTransforms().addAll(t, p, ry, rx, s, ip);
+                break;
+            case YX:
+                getTransforms().addAll(t, p, rx, ry, s, ip);
                 break;
             case XZ:
                 getTransforms().addAll(t, p, rz, rx, s, ip);

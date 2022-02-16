@@ -3,31 +3,30 @@ package org.mahefa.controller;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
 import javafx.util.Duration;
+import org.mahefa.common.constants.CelestialBodyCategory;
 import org.mahefa.common.constants.SolarSystemTextures;
-import org.mahefa.common.utils.StringUtils;
+import org.mahefa.common.constants.TabColumns;
 import org.mahefa.common.utils.TextureUtils;
 import org.mahefa.common.utils.calendar.julian_day.JulianDay;
-import org.mahefa.common.utils.math.astronomy.AstroMath;
-import org.mahefa.common.utils.math.geometry.angle.Angle;
 import org.mahefa.controller.javafx.Camera;
+import org.mahefa.data.CelestialBody;
 import org.mahefa.data.oracle.Xform;
-import org.mahefa.data.meeus.jean.Coordinates;
 import org.mahefa.data.view.DataView;
 import org.mahefa.service.application.javafx.animation.AnimationAppService;
 import org.mahefa.service.application.javafx.object.galaxy.GalaxyAppService;
@@ -35,11 +34,9 @@ import org.mahefa.service.application.javafx.physic.motion.MotionAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -48,16 +45,17 @@ import java.util.List;
 public class MainWindowController {
 
     @FXML AnchorPane anchorPane;
-    @FXML HBox hBox;
+    @FXML HBox controlButtonBox;
+    @FXML VBox descriptionBox;
     @FXML Button planetView, innerView, outerView;
-    @FXML Label currentDate, currentTime;
-    @FXML TableView tableView;
+    @FXML Label currentDate, currentTime, title;
+    @FXML TableView<DataView> tableView;
     @FXML SubScene subScene;
+    @FXML Pane imagePanel;
 
     @Autowired GalaxyAppService galaxyAppService;
     @Autowired MotionAppService motionAppService;
     @Autowired AnimationAppService animationAppService;
-    @Autowired TextureUtils textureUtils;
     @Autowired Camera camera;
 
     @Value("${mouse.speed}") double mouseSpeed;
@@ -75,18 +73,14 @@ public class MainWindowController {
     @FXML
     private void initialize() {
         // Bind managed property
-        planetView.managedProperty().bind(planetView.visibleProperty());
-        outerView.managedProperty().bind(outerView.visibleProperty());
-        innerView.managedProperty().bind(innerView.visibleProperty());
-        tableView.managedProperty().bind(tableView.visibleProperty());
+        managedControl();
 
         root.getChildren().addAll(world, camera.build());
         root.setDepthTest(DepthTest.ENABLE);
 
-        world.getChildren().add(galaxyAppService.buildGalaxy());
+        world.getChildren().add( galaxyAppService.buildGalaxy(JulianDay.getJDEAt()));
 
         showCurrentDateTime();
-        loadAstronomicalCoordinates();
 
         subScene.setRoot(root);
         subScene.setCamera(camera.getPerspectiveCamera());
@@ -101,25 +95,59 @@ public class MainWindowController {
 
     @FXML
     private void enterInnerView(ActionEvent event) {
-        innerView.setVisible(false);
-        planetView.setVisible(false);
-        outerView.setVisible(true);
+        animationAppService.fadeOut(tableView, anchorPane);
+        closeDescriptionBox(event);
+
+        animationAppService.fadeOut(innerView, controlButtonBox);
+        animationAppService.fadeOut(planetView, controlButtonBox);
+        animationAppService.fadeIn(outerView, controlButtonBox);
     }
 
     @FXML
     private void enterOuterView(ActionEvent event) {
-        outerView.setVisible(false);
-        planetView.setVisible(false);
-        innerView.setVisible(true);
+        animationAppService.fadeOut(tableView, anchorPane);
+        closeDescriptionBox(event);
+
+        animationAppService.fadeOut(outerView, controlButtonBox);
+        animationAppService.fadeOut(planetView, controlButtonBox);
+        animationAppService.fadeIn(innerView, controlButtonBox);
 
         camera.reset();
+        camera.resetPositionFrom(currentPivot);
 
         resetPivot();
     }
 
     @FXML
+    private void showDescription(ActionEvent event) {
+        if(!descriptionBox.visibleProperty().getValue()) {
+            animationAppService.fadeIn(descriptionBox, anchorPane);
+            tableView.setVisible(false);
+
+            if(currentPivot != null) {
+                final String pivotOn = currentPivot.getId();
+                title.setText(pivotOn.toUpperCase());
+                imagePanel.getStyleClass().add(pivotOn.toLowerCase());
+            }
+        }
+    }
+
+    @FXML
     private void showAstronomicalCoordinates(ActionEvent event) {
-        tableView.setVisible(!tableView.visibleProperty().getValue());
+        loadAstronomicalCoordinates();
+
+        if(tableView.visibleProperty().getValue()) {
+            animationAppService.fadeOut(tableView, anchorPane);
+        } else {
+            animationAppService.fadeIn(tableView, anchorPane);
+        }
+
+        closeDescriptionBox(event);
+    }
+
+    @FXML
+    private void closeDescriptionBox(ActionEvent event) {
+        animationAppService.fadeOut(descriptionBox, anchorPane);
     }
 
     private void showCurrentDateTime() {
@@ -136,47 +164,50 @@ public class MainWindowController {
     }
 
     private void loadAstronomicalCoordinates() {
-        final List<Coordinates> coordinatesList =  galaxyAppService.getCurrentCoordinates();
+        final List<DataView> dataViews = galaxyAppService.getInfo(JulianDay.getJDEAt());
         ObservableList<DataView> data = FXCollections.observableArrayList();
-        DataView dataView = new DataView();
 
-        coordinatesList.forEach(coordinates -> {
-            try {
-                final String designation = StringUtils.capitalize(coordinates.getDesignation());
+        // Add columns
+        if(CollectionUtils.isEmpty(tableView.getColumns())) {
+            TableColumn<DataView, String> col0 = new TableColumn<>(TabColumns._BLANK.toValue());
+            col0.setCellValueFactory(new PropertyValueFactory<>("designation"));
 
-                // Add columns
-                TableColumn<DataView, String> tableColumn = new TableColumn<>(designation);
-                TableColumn<DataView, String> nestedTableColumn1 = new TableColumn<>("R.A");
-                TableColumn<DataView, String> nestedTableColumn2 = new TableColumn<>("Decl");
+            TableColumn<DataView, String> col1 = new TableColumn<>(TabColumns.RIGHT_ASCENSION.toValue());
+            col1.setCellValueFactory(new PropertyValueFactory<>("ra"));
 
-                final Method methodGet = DataView.class.getMethod(String.format("get%s", designation));
+            TableColumn<DataView, String> col2 = new TableColumn<>(TabColumns.DECLINATION.toValue());
+            col2.setCellValueFactory(new PropertyValueFactory<>("decl"));
 
-                tableColumn.getColumns().addAll(nestedTableColumn1, nestedTableColumn2);
-                nestedTableColumn1.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> ((DataView.Data) methodGet.invoke(cellData.getValue())).getRa()));
-                nestedTableColumn2.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> ((DataView.Data) methodGet.invoke(cellData.getValue())).getDecl()));
+            TableColumn<DataView, String> col3 = new TableColumn<>(TabColumns.MAGNITUDE.toValue());
+            col3.setCellValueFactory(new PropertyValueFactory<>("magnitude"));
 
-                tableView.getColumns().addAll(tableColumn);
+            TableColumn<DataView, String> col4 = new TableColumn<>(TabColumns.SIZE.toValue());
+            col4.setCellValueFactory(new PropertyValueFactory<>("size"));
 
-                // Disable sorting
-                tableColumn.setSortable(false);
-                nestedTableColumn1.setSortable(false);
-                nestedTableColumn2.setSortable(false);
+            TableColumn<DataView, String> col5 = new TableColumn<>(TabColumns.PHASE.toValue());
+            col5.setCellValueFactory(new PropertyValueFactory<>("phase"));
 
-                // Put data
-                final String ra = Angle.convertDecimalDegreeToDMS(coordinates.getRightAscension());
-                final String decl = String.format("%s°", AstroMath.round(coordinates.getDeclination(), 1e2));
+            TableColumn<DataView, String> col6 = new TableColumn<>(TabColumns.RISE.toValue());
+            col6.setCellValueFactory(new PropertyValueFactory<>("rise"));
 
-                final Method methodSet = DataView.class.getMethod(String.format("set%s", designation), DataView.Data.class);
-                methodSet.invoke(dataView, dataView.new Data(ra, decl));
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-                ex.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+            TableColumn<DataView, String> col7 = new TableColumn<>(TabColumns.TRANSIT.toValue());
+            col7.setCellValueFactory(new PropertyValueFactory<>("transit"));
 
-        data.add(dataView);
+            TableColumn<DataView, String> col8 = new TableColumn<>(TabColumns.SET.toValue());
+            col8.setCellValueFactory(new PropertyValueFactory<>("set"));
+
+            tableView.getColumns().addAll(col0, col1, col2, col3, col4, col5, col6, col7, col8);
+
+            // Disable sorting
+            col0.setSortable(false);
+            col1.setSortable(false); col2.setSortable(false); col3.setSortable(false); col4.setSortable(false);
+            col5.setSortable(false); col6.setSortable(false); col7.setSortable(false); col8.setSortable(false);
+        }
+
+        // Put data
+        data.addAll(dataViews);
         tableView.setItems(data);
+        tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
     private void nodeEventControl() {
@@ -185,43 +216,43 @@ public class MainWindowController {
         if(nodes != null && !nodes.isEmpty()) {
             nodes.forEach(node -> {
                 node.setOnMouseClicked(event -> {
-                    innerView.setVisible(false);
-                    outerView.setVisible(false);
-                    planetView.setVisible(true);
+                    animationAppService.fadeOut(innerView, controlButtonBox);
+                    animationAppService.fadeOut(outerView, controlButtonBox);
+                    animationAppService.fadeOut(tableView, anchorPane);
+
+//                    planetView.setVisible(true);
+                    animationAppService.fadeIn(planetView, controlButtonBox);
                     planetView.setText(node.getId().toUpperCase());
                     planetView.setId(node.getId().toLowerCase());
 
                     // Get special class
-                    planetView.getStyleClass().removeAll("isRingSystem");
+                    planetView.getGraphic().getStyleClass().removeAll("isRingSystem");
 
-                    if(node.getStyleClass() != null && node.getStyleClass().size() > 0) {
-                        final String specialClass = node.getStyleClass().get(0);
-                        planetView.setStyle(specialClass);
-                    }
+                    final CelestialBody celestialBody = (CelestialBody) node.getUserData();
+
+                    if(celestialBody.getPhysicalCharacteristic().isRingSystem())
+                        planetView.getGraphic().getStyleClass().add("isRingSystem");
 
                     // Reset previous pivot
                     resetPivot();
 
+                    node.setCacheHint(CacheHint.ROTATE);
+
                     // Load texture
-                    textureUtils.setMaps(SolarSystemTextures.getDiffuseMap(node.getId().toLowerCase()), null, null, null);
-                    ((Sphere)node).setMaterial(textureUtils.getPhongMaterial());
+                    ((Sphere)node).setMaterial(
+                            TextureUtils.get(
+                                    SolarSystemTextures.getDiffuseMap(node.getId().toLowerCase()),
+                                    SolarSystemTextures.getSpecularMap(node.getId().toLowerCase()),
+                                    SolarSystemTextures.getBumpMap(node.getId().toLowerCase()),
+                                    SolarSystemTextures.getBumpMap(node.getId().toLowerCase())
+                            )
+                    );
 
                     // Lock on pivot
+                    camera.lock(currentPivot, node);
+//                    motionAppService.rotate(node, 0.005);
+
                     currentPivot = node;
-
-                    camera.gettingCloser();
-
-                    final LocalDateTime localDateTime = LocalDateTime.now();
-                    final double JDE = JulianDay.getJulianDay(
-                            localDateTime.getYear(), localDateTime.getMonth().getValue(), localDateTime.getDayOfMonth(),
-                            localDateTime.getHour(), localDateTime.getMinute(), localDateTime.getSecond()
-                    );
-                    final double T = JulianDay.inJulianCenturies(JDE);
-                    final double a = AstroMath.horner(T, galaxyAppService.getCelestialBody(node.getId()).getOrbitalCharacteristic().getSemiMajorAxis());
-                    final double n = Angle.normalize(0.9856076686 / (a * Math.sqrt(a))) * 1e-1;
-
-                    animationAppService.add("rotate", motionAppService.rotate(node, n));
-                    animationAppService.add("focus", camera.lock(currentPivot));
                 });
 
                 node.setOnMouseEntered(event -> subScene.setCursor(Cursor.HAND));
@@ -269,28 +300,33 @@ public class MainWindowController {
         });
     }
 
-    /**
-     * Reset pivot
-     */
     void resetPivot() {
         if(currentPivot != null) {
-            final String id = currentPivot.getId();
+            final CelestialBody celestialBody = (CelestialBody) currentPivot.getUserData();
+            final String id = celestialBody.getDesignation().toLowerCase();
+            PhongMaterial phongMaterial;
 
-            animationAppService.remove("focus", "rotate");
-            camera.movingFarAway();
-
-            if(id.equalsIgnoreCase("sun")) {
-                final String diffuseMap = SolarSystemTextures.getDiffuseMap(id.toLowerCase());
-                textureUtils.setMaps(diffuseMap, null, null, diffuseMap);
+            if(celestialBody.getCelestialBodyCategory().equals(CelestialBodyCategory.STAR)) {
+                final String diffuseMap = SolarSystemTextures.getDiffuseMap(id);
+                phongMaterial = TextureUtils.getTexture(diffuseMap, diffuseMap);
             } else {
-                textureUtils.setColor(SolarSystemTextures.getColor(id.toLowerCase()));
+                phongMaterial = TextureUtils.getTextureColor(SolarSystemTextures.getColor(id));
             }
 
-            ((Sphere) currentPivot).setMaterial(textureUtils.getPhongMaterial());
+            currentPivot.setCacheHint(CacheHint.SPEED);
+            ((Sphere) currentPivot).setMaterial(phongMaterial);
         }
     }
 
     List<Node> getNodes(int index) {
         return ((Xform) ((Xform) ((Xform) world.getChildren().get(0)).getChildren().get(0)).getChildren().get(index)).getChildren();
+    }
+
+    void managedControl() {
+        planetView.managedProperty().bind(planetView.visibleProperty());
+        outerView.managedProperty().bind(outerView.visibleProperty());
+        innerView.managedProperty().bind(innerView.visibleProperty());
+        tableView.managedProperty().bind(tableView.visibleProperty());
+        descriptionBox.managedProperty().bind(descriptionBox.visibleProperty());
     }
 }

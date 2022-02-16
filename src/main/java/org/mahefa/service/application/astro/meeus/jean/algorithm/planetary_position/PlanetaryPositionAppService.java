@@ -1,8 +1,12 @@
-package org.mahefa.service.application.meeus.jean.algorithm.coordinates;
+package org.mahefa.service.application.astro.meeus.jean.algorithm.planetary_position;
 
-import org.mahefa.data.meeus.jean.Coordinates;
+import javafx.scene.Node;
+import org.mahefa.data.OrbitalCharacteristic;
+import org.mahefa.data.meeus.jean.HeliocentricCoordinate;
 
-public interface CoordinatesAppService {
+public interface PlanetaryPositionAppService {
+
+    Node minorPlanet(OrbitalCharacteristic orbitalCharacteristic, double radius, double axialTilt, String designation);
 
     /**
      *
@@ -23,5 +27,6 @@ public interface CoordinatesAppService {
      *
      * @throws Exception
      */
-    Coordinates findHeliocentricCoordinates(String designation, double t) throws Exception;
+    HeliocentricCoordinate getHeliocentricCoordinates(String designation, double t) throws Exception;
+
 }

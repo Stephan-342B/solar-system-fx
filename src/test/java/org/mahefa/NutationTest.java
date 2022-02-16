@@ -7,8 +7,7 @@ import org.junit.runner.RunWith;
 import org.mahefa.common.utils.math.astronomy.AstroMath;
 import org.mahefa.common.utils.math.geometry.angle.Angle;
 import org.mahefa.common.utils.calendar.julian_day.JulianDay;
-import org.mahefa.data.meeus.jean.Nutation;
-import org.mahefa.service.application.meeus.jean.algorithm.nutations.NutationAppService;
+import org.mahefa.service.application.astro.meeus.jean.algorithm.nutations.Nutation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -20,7 +19,7 @@ import java.time.LocalDateTime;
 public class NutationTest {
 
     @Autowired
-    NutationAppService nutationAppService;
+    Nutation nutation;
 
     private double t;
 
@@ -36,7 +35,7 @@ public class NutationTest {
 
     @Test
     public void checkNutation() {
-        final Nutation nutation = nutationAppService.find(t);
+        final org.mahefa.data.meeus.jean.Nutation nutation = this.nutation.find(t);
         final double Δψ = AstroMath.round(nutation.getLongitude(), 1e6);
         final double Δε = AstroMath.round(nutation.getObliquity(), 1e6);
         final double rΔψ = AstroMath.round(Angle.dmsToRadian(0, 0, -3.788), 1e6);
@@ -48,7 +47,7 @@ public class NutationTest {
     @Test
     public void checkMeanObliquityLaskar() {
         try {
-            final double ε0 = AstroMath.round(nutationAppService.meanObliquityLaskar(t), 1e6);
+            final double ε0 = AstroMath.round(nutation.meanObliquityLaskar(t), 1e6);
             final double rε0 = Angle.toDecimalDegree(23, 26, 27.407);
 
             Assert.assertTrue(ε0 == AstroMath.round(Math.toRadians(rε0), 1e6));

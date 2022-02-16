@@ -1,5 +1,10 @@
 package org.mahefa.common.utils.math.astronomy;
 
+import org.mahefa.data.meeus.jean.Term;
+
+import javax.vecmath.Vector3d;
+import java.util.List;
+
 public final class AstroMath {
 
     /**
@@ -28,7 +33,21 @@ public final class AstroMath {
      * @return
      */
     public static double getEccentricAnomaly(final double e, final double M, double... eccentricityAnomaly) {
-        return AstroMathImpl.getEccentricAnomaly(e, M, eccentricityAnomaly);
+        double tmp = M;
+
+        if(eccentricityAnomaly != null && eccentricityAnomaly.length > 0) {
+            tmp = eccentricityAnomaly[0];
+        }
+
+        double E = M + (e * Math.sin(tmp));
+        double Es = (double) round(E, 1e8); // precision at 12 decimal places
+        double Tmps = (double) round(tmp, 1e8);
+
+        if((Es - Tmps) == 0 || (Es - Tmps) == 1e-8) {
+            return E;
+        }
+
+        return getEccentricAnomaly(e, M, E);
     }
 
     /**
@@ -39,7 +58,9 @@ public final class AstroMath {
      * @return
      */
     public static double distanceToEarth(double x, double y, double z) {
-        return AstroMathImpl.distanceToEarth(x, y, z);
+        return Math.sqrt(
+                (Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2))
+        );
     }
 
     /**
@@ -52,7 +73,14 @@ public final class AstroMath {
      * @return
      */
     public static double horner(double x, double[] coefficients) {
-        return AstroMathImpl.horner(x, coefficients);
+        final int length = coefficients.length;
+        double y = coefficients[length - 1];
+
+        for(int i = length - 2; i >= 0; i--) {
+            y = (y * x) + coefficients[i];
+        }
+
+        return y;
     }
 
     /**
@@ -62,6 +90,53 @@ public final class AstroMath {
      * @return
      */
     public static double round(double value, double decimal) {
-        return AstroMathImpl.round(value, decimal);
+        return (double) Math.round(value * decimal) / decimal;
+    }
+
+    /**
+     * Calculate the value of each term by this formulae
+     * A cos (b + Ct)
+     *
+     * the quantities B and C are expressed in radians. The coefficients A are in units of 10^~8 radian in the
+     * case of the longitude and the latitude, in units of 10^8 astronomical unit for the radius vector.
+     *
+     * @param termList
+     * @param t
+     *
+     * @return
+     */
+    public static double computeTerm(final List<Term> termList, final double t) {
+        int i = 0;
+        double[] rows = new double[termList.size()];
+
+        for(Term term: termList) {
+            final double length = term.getLength();
+            double row = 0d;
+
+            for(int j = 0; j < length; j++) {
+                final double A = term.getA().get(j);
+                final double B = term.getB().get(j);
+                final double C = (term.getC().get(j) * t);
+
+                row += (A * Math.cos(B + C));
+            }
+
+            rows[i] = row;
+            i++;
+        }
+
+        return AstroMath.horner(t, rows) / Math.pow(10, 8);
+    }
+
+    public static Vector3d getCoordinates(final double L, final double B, final double R, final double L0, final double B0, final double R0) {
+        final double x = (R * Math.cos(B) * Math.cos(L)) - (R0 * Math.cos(B0) * Math.cos(L0));
+        final double y = (R * Math.cos(B) * Math.sin(L)) - (R0 * Math.cos(B0) * Math.sin(L0));
+        final double z = (R * Math.sin(B)) - (R0 * Math.sin(B0));
+
+        return new Vector3d(
+                AstroMath.round(x, 1e6),
+                AstroMath.round(y, 1e6),
+                AstroMath.round(z, 1e6)
+        );
     }
 }

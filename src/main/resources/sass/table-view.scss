@@ -1,27 +1,44 @@
 .table-view {
     -fx-background-color: transparent;
-}
 
-.table-view .column-header-background {
-    -fx-background-color: -color-black;
-}
+    .column-header-background {
+        -fx-background-color: -color-black;
+    }
 
-.table-view .column-header {
-    -fx-border-width: 0.2;
-    -fx-opacity: 100;
-}
+    .column-header {
+        -fx-border-width: 0.2;
+        -fx-opacity: 100;
+    }
 
-.table-view .table-cell {
-    -fx-border-color: transparent;
-    /*-fx-padding: 2 3 2 3px;*/
-    -fx-alignment: center;
+    .table-cell {
+        -fx-border-color: transparent;
+        -fx-padding: 2 3 2 3px;
+        -fx-alignment: center;
+    }
+
+    .corner {
+        -fx-background-color: transparent;
+    }
 }
 
 .table-row-cell {
-    -fx-border-width-: 0;
     -fx-border-color: transparent;
-    -fx-background-color: -color-red;
-    -fx-opacity: 100;
+    -fx-background-color: -color-blue;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+    -fx-pref-height: 40px;
+    -fx-pref-width: 120px;
+    -fx-max-height: 40px;
+    -fx-max-width: 120px;
+    -fx-opacity: 100%;
+
+    &:hover {
+        -fx-background-color: -color-blue-highlight;
+    }
+
+    &:selected {
+        -fx-background-color: -color-blue-highlight;
+    }
 }
 
 .table-view .virtual-flow .scroll-bar:vertical,
@@ -30,10 +47,6 @@
 .table-view .virtual-flow .scroll-bar:horizontal,
 .table-view .virtual-flow .scroll-bar:horizontal .track,
 .table-view .virtual-flow .scroll-bar:horizontal .track-background {
-    -fx-background-color: transparent;
-}
-
-.table-view .corner {
     -fx-background-color: transparent;
 }
 

@@ -9,4 +9,8 @@ public final class StringUtils {
 
         return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
     }
+
+    public static boolean isNotBlank(String text) {
+        return (text != null && !text.trim().equalsIgnoreCase(""));
+    }
 }

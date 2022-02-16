@@ -1,8 +1,6 @@
-package org.mahefa.service.application.meeus.jean.algorithm.nutations;
+package org.mahefa.service.application.astro.meeus.jean.algorithm.nutations;
 
-import org.mahefa.data.meeus.jean.Nutation;
-
-public interface NutationAppService {
+public interface Nutation {
 
     /**
      * Calculate the nutation in longitude and obliquity
@@ -12,7 +10,7 @@ public interface NutationAppService {
      *
      * @param t is the date to find the nutation for
      */
-    Nutation find(double t);
+    org.mahefa.data.meeus.jean.Nutation find(double t);
 
     /**
      * Calculate ε0 using the International Astronomical Union's adopted formulae

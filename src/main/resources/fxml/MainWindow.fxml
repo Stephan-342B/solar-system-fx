@@ -7,6 +7,7 @@
 
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 
+<?import javafx.scene.text.Text?>
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.mahefa.controller.MainWindowController"
             fx:id="anchorPane" prefHeight="800.0" prefWidth="800.0">
@@ -21,7 +22,7 @@
         </SubScene>
 
         <!--    Date and time are placed here    -->
-        <VBox fx:id="vBox" AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="5">
+        <VBox AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="5">
             <padding>
                 <Insets top="5" left="12" bottom="10" right="12"></Insets>
             </padding>
@@ -29,8 +30,27 @@
             <Label fx:id="currentTime" styleClass="timer"></Label>
         </VBox>
 
-        <!--    Show astronomical coordinates of the major planet at the current time    -->
-        <TableView fx:id="tableView" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" visible="false" managed="false" prefHeight="85">
+        <!--    Description box    -->
+        <VBox fx:id="descriptionBox" prefWidth="${anchorPane.width*0.33}" AnchorPane.topAnchor="10.0" AnchorPane.bottomAnchor="5.0" alignment="TOP_LEFT" spacing="5"
+              visible="false" managed="false" styleClass="description-box" fillWidth="true">
+            <padding>
+                <Insets top="5" left="12" bottom="5" right="12"></Insets>
+            </padding>
+            <HBox prefWidth="${descriptionBox.width}">
+                <Pane HBox.hgrow="ALWAYS" />
+                <Button onAction="#closeDescriptionBox" prefHeight="20" prefWidth="25" styleClass="bt-x-close">
+                    <graphic>
+                        <Region styleClass="icon"></Region>
+                    </graphic>
+                </Button>
+            </HBox>
+            <Label fx:id="title" prefWidth="${descriptionBox.width}" styleClass="title_description"></Label>
+            <Pane fx:id="imagePanel" prefHeight="115" prefWidth="${descriptionBox.width}" styleClass="imgPane"/>
+<!--            <Text wrappingWidth="${vBox.width}" text="Mars is a dusty, cold, desert world with a very thin atmosphere. There is strong evidence Mars was—billions of years ago—wetter and warmer, with a thicker atmosphere."></Text>-->
+        </VBox>
+
+        <!--    Show astronomical coordinate of the major planet at the current time    -->
+        <TableView fx:id="tableView" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" visible="false" managed="false" prefHeight="300">
             <placeholder>
                 <Label text="No computed data found"/>
             </placeholder>
@@ -41,33 +61,33 @@
         </TableView>
 
         <!--    Control buttons    -->
-        <HBox fx:id="hBox" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="10">
+        <HBox fx:id="controlButtonBox" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" alignment="CENTER" spacing="10">
             <padding>
                 <Insets top="15" left="12" bottom="15" right="12"></Insets>
             </padding>
-            <Button text="SOLAR SYSTEM" onAction="#enterOuterView" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button text="SOLAR SYSTEM" onAction="#enterOuterView" maxWidth="1.7976931348623157E308" styleClass="bt-default">
                 <graphic>
-                    <Region styleClass="icon-solar-system"></Region>
+                    <Region styleClass="icon, icon-solar-system"></Region>
                 </graphic>
             </Button>
-            <Button fx:id="innerView" onAction="#enterInnerView" text="INNER SOLAR SYSTEM" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button fx:id="innerView" onAction="#enterInnerView" text="INNER SOLAR SYSTEM" maxWidth="1.7976931348623157E308" styleClass="bt-default">
                 <graphic>
-                    <Region styleClass="icon-inner-solar-system"></Region>
+                    <Region styleClass="icon, icon-inner-solar-system"></Region>
                 </graphic>
             </Button>
-            <Button fx:id="outerView" visible="false" managed="false" onAction="#enterOuterView" text="OUTER SOLAR SYSTEM" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button fx:id="outerView" visible="false" managed="false" onAction="#enterOuterView" text="OUTER SOLAR SYSTEM" maxWidth="1.7976931348623157E308" styleClass="bt-default">
                 <graphic>
-                    <Region styleClass="icon-solar-system"></Region>
+                    <Region styleClass="icon, icon-solar-system"></Region>
                 </graphic>
             </Button>
-            <Button fx:id="planetView" visible="false" managed="false" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button fx:id="planetView" onAction="#showDescription" visible="false" managed="false" maxWidth="1.7976931348623157E308" styleClass="bt-default">
                 <graphic>
-                    <Region styleClass="icon-planet"></Region>
+                    <Region styleClass="icon, icon-planet"></Region>
                 </graphic>
             </Button>
-            <Button fx:id="astronomicalCoordinatesView" onAction="#showAstronomicalCoordinates" text="ASTRONOMICAL COORDINATES" maxWidth="1.7976931348623157E308" styleClass="bt-style1">
+            <Button fx:id="astronomicalCoordinatesView" onAction="#showAstronomicalCoordinates" text="ASTRONOMICAL COORDINATES" maxWidth="1.7976931348623157E308" styleClass="bt-default">
                 <graphic>
-                    <Region styleClass="icon-coordinates"></Region>
+                    <Region styleClass="icon, icon-coordinate"></Region>
                 </graphic>
             </Button>
         </HBox>

@@ -1,6 +1,6 @@
 [
   {
-    "designation": "Mercury",
+    "label": "Mercury",
     "l": [
       {
         "length": 38,
@@ -99,7 +99,7 @@
     ]
   },
   {
-    "designation": "Venus",
+    "label": "Venus",
     "l": [
       {
         "length": 24,
@@ -162,12 +162,6 @@
         "a": [ 647, 20, 6, 3 ],
         "b": [ 4.992, 3.14, 0.77, 5.44 ],
         "c": [ 10213.286, 0, 20426.57, 30639.86 ]
-      },
-      {
-        "length": 1,
-        "a": [ 14 ],
-        "b": [ 0.32 ],
-        "c": [ 10213.29 ]
       }
     ],
     "r": [
@@ -194,17 +188,11 @@
         "a": [ 50 ],
         "b": [ 3.22 ],
         "c": [ 10213.29 ]
-      },
-      {
-        "length": 1,
-        "a": [ 1 ],
-        "b": [ 0.92 ],
-        "c": [ 10213.29 ]
       }
     ]
   },
   {
-    "designation": "Earth",
+    "label": "Earth",
     "l": [
       {
         "length": 64,
@@ -291,7 +279,7 @@
     ]
   },
   {
-    "designation": "Mars",
+    "label": "Mars",
     "l": [
       {
         "length": 69,
@@ -396,7 +384,7 @@
     ]
   },
   {
-    "designation": "Jupiter",
+    "label": "Jupiter",
     "l": [
       {
         "length": 64,
@@ -513,7 +501,7 @@
     ]
   },
   {
-    "designation": "Saturn",
+    "label": "Saturn",
     "l": [
       {
         "length": 90,
@@ -630,7 +618,7 @@
     ]
   },
   {
-    "designation": "Uranus",
+    "label": "Uranus",
     "l": [
       {
         "length": 91,
@@ -723,7 +711,7 @@
     ]
   },
   {
-    "designation": "Neptune",
+    "label": "Neptune",
     "l": [
       {
         "length": 38,

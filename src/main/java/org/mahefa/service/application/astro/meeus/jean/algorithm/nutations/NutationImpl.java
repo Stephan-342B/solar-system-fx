@@ -1,15 +1,14 @@
-package org.mahefa.service.application.meeus.jean.algorithm.nutations;
+package org.mahefa.service.application.astro.meeus.jean.algorithm.nutations;
 
 import org.mahefa.common.utils.math.astronomy.AstroMath;
 import org.mahefa.common.utils.math.geometry.angle.Angle;
-import org.mahefa.data.meeus.jean.Nutation;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NutationAppServiceImpl implements NutationAppService {
+public class NutationImpl implements Nutation {
 
     private static final double[][] PERIODIC_TERMS = {
-//            D, M, M', F, Ω, sin 0, sin 1, cos 0, cos 1
+            /* D, M, M', F, Ω, sin 0, sin 1, cos 0, cos 1 */
             { 0, 0, 0, 0, 1, -171996, -174.2, 92025, 8.9 },
             { -2, 0, 0, 2, 2, -13187, -1.6, 5736, -3.1 },
             { 0, 0, 0, 2, 2, -2274, -0.2, 977, -0.5 },
@@ -76,7 +75,7 @@ public class NutationAppServiceImpl implements NutationAppService {
     };
 
     @Override
-    public Nutation find(double t) {
+    public org.mahefa.data.meeus.jean.Nutation find(double t) {
         /**
          * Required terms:
          * D: Mean elongation of the Moon from the Sun
@@ -113,7 +112,7 @@ public class NutationAppServiceImpl implements NutationAppService {
             Δε += ((row[7] + (row[8] * t)) * Math.cos(arg) / 1e4);
         }
 
-        return new Nutation(Angle.dmsToRadian(0,0, Δψ), Angle.dmsToRadian(0,0, Δε));
+        return new org.mahefa.data.meeus.jean.Nutation(Angle.dmsToRadian(0,0, Δψ), Angle.dmsToRadian(0,0, Δε));
     }
 
     @Override
@@ -132,9 +131,8 @@ public class NutationAppServiceImpl implements NutationAppService {
     public double meanObliquityLaskar(double t) throws Exception {
         final double U = t * 1e-2;
 
-        if(U >= 1) {
+        if(U >= 1)
             throw new Exception("date not valid");
-        }
 
         final double[] polynomialTerms = {
                 Angle.dmsToRadian(23, 26, 21.448),

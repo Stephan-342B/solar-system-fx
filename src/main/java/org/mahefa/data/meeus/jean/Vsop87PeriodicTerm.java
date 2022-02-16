@@ -2,19 +2,19 @@ package org.mahefa.data.meeus.jean;
 
 import java.util.List;
 
-public class PeriodicTerm {
+public class Vsop87PeriodicTerm {
 
-    private String designation;
+    private String label;
     private List<Term> l;
     private List<Term> b;
     private List<Term> r;
 
-    public String getDesignation() {
-        return designation;
+    public String getLabel() {
+        return label;
     }
 
-    public void setDesignation(String designation) {
-        this.designation = designation;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public List<Term> getL() {

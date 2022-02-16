@@ -1,21 +1,20 @@
 package org.mahefa.controller.javafx;
 
-import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
-import javafx.util.Duration;
 import org.mahefa.data.oracle.Xform;
+import org.mahefa.service.application.javafx.animation.AnimationAppService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.vecmath.Vector3d;
 
 @Component
 public class Camera {
 
     final PerspectiveCamera perspectiveCamera = new PerspectiveCamera(true);
-    final Xform cameraXform = new Xform(Xform.RotateOrder.YZX);
+    final Xform cameraXform = new Xform(Xform.RotateOrder.YXZ);
     final Xform cameraXform2 = new Xform();
     final Xform cameraXform3 = new Xform();
 
@@ -26,8 +25,10 @@ public class Camera {
     @Value("${camera.initial.y.angle: 0.0}") double initialYAngle;
     @Value("${camera.close.range}") double closeRange;
 
-    public Camera() {
-    }
+    @Autowired
+    AnimationAppService animationAppService;
+
+    public Camera() {}
 
     public PerspectiveCamera getPerspectiveCamera() {
         return perspectiveCamera;
@@ -59,27 +60,33 @@ public class Camera {
         return cameraXform;
     }
 
-    public void gettingCloser() {
-        executeTimeLine(initialDistance, closeRange);
-    }
+    public void lock(Node pivotA, Node pivotB) {
+        Vector3d coordinateFrom = new Vector3d(perspectiveCamera.getTranslateX(), perspectiveCamera.getTranslateY(), perspectiveCamera.getTranslateZ());
+                //new Coordinate(cameraXform.t.getX(), cameraXform.t.getY(), cameraXform.t.getZ());
 
-    public void movingFarAway() {
-        executeTimeLine(closeRange, initialDistance);
-    }
-
-    public AnimationTimer lock(Node currentPivot) {
-        AnimationTimer animationTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                cameraXform.t.setX(currentPivot.getTranslateX());
-                cameraXform.t.setY(currentPivot.getTranslateY());
-                cameraXform.t.setZ(currentPivot.getTranslateZ());
+        if(pivotB != null) {
+            if(pivotA != null) {
+                coordinateFrom.setX(pivotA.getTranslateX());
+                coordinateFrom.setY(pivotA.getTranslateY());
+                coordinateFrom.setZ(pivotA.getTranslateZ());
             }
-        };
 
-        animationTimer.start();
+            animationAppService.move(
+                    cameraXform,
+                    coordinateFrom,
+                    new Vector3d(pivotB.getTranslateX(), pivotB.getTranslateY(), pivotB.getTranslateZ())
+            );
+        }
+    }
 
-        return animationTimer;
+    public void resetPositionFrom(Node pivot) {
+        if(pivot != null) {
+//            animationAppService.move(
+//                    perspectiveCamera,
+//                    new Coordinate(pivot.getTranslateX(), pivot.getTranslateY(), pivot.getTranslateZ()),
+//                    new Coordinate(0d, 0d, initialDistance)
+//            );
+        }
     }
 
     public void reset() {
@@ -89,24 +96,5 @@ public class Camera {
         perspectiveCamera.setNearClip(nearClip);
         perspectiveCamera.setFarClip(farClip);
         perspectiveCamera.setTranslateZ(initialDistance);
-
-        cameraXform.t.setX(0.0);
-        cameraXform.t.setY(0.0);
-        cameraXform.t.setZ(0.0);
-    }
-
-    void executeTimeLine(double initialValue, double finalValue) {
-        Timeline timeline = new Timeline(
-                new KeyFrame(
-                        Duration.seconds(0),
-                        new KeyValue(perspectiveCamera.translateZProperty(), initialValue)
-                ),
-                new KeyFrame(
-                        Duration.seconds(1.5),
-                        new KeyValue(perspectiveCamera.translateZProperty(), finalValue)
-                )
-        );
-        timeline.setCycleCount(1);
-        timeline.play();
     }
 }

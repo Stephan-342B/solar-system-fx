@@ -3,12 +3,22 @@ package org.mahefa.common.constants;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ * Diffuse: is the color map.
+ * Specular/bump: is a texture that defines how the light reflect the object.
+ * Bump/Normal: is a texture that defines how an object looks really with some bumps.
+ * Illumination:
+ *
+ * Planet like Jupiter does not have a specular or either bump map by the fact
+ * that he's just a giant gas.
+ */
 public enum SolarSystemTextures {
     SUN ("sun", "#F7FD04", "sun.jpg", null, null, "sun.jpg", null),
-    MERCURY ("mercury", "#DDDDDD", "mercury/map.jpg", null, "mercury/bump.jpg", null, null),
-    VENUS ("venus", "#FB9300", "venus/map.jpg", null, "venus/bump.jpg", null, null),
-    EARTH ("earth", "#125D98", "earth/map.jpg", "earth/specular.jpg", "earth/bump.jpg", null, null),
-    MARS ("mars", "#C84B31", "mars/map.jpg", null, "mars/bump.jpg", null, null),
+    MERCURY ("mercury", "#DDDDDD", "mercury/map.jpg", "mercury/bump.jpg", null,null, null),
+    VENUS ("venus", "#FB9300", "venus/map.jpg", "venus/bump.jpg", null, null, null),
+    EARTH ("earth", "#125D98", "earth/map.jpg", "earth/specular.jpg", "earth/bump.jpg", "earth/illumination.jpg", null),
+    MARS ("mars", "#C84B31", "mars/map.jpg", "mars/bump.jpg", null, null, null),
     JUPITER ("jupiter", "#A45C40", "jupiter/map.jpg", null, null, null, null),
     SATURN ("saturn", "#D8B384", "saturn/map.jpg", null, null, null, "saturn/saturn_ring_color.jpg"),
     URANUS ("uranus", "#CEE5D0", "uranus/map.jpg", null, null, null, "uranus/uranus_ring_color.jpg"),

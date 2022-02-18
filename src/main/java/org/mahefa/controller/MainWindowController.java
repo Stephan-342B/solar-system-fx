@@ -298,9 +298,9 @@ public class MainWindowController {
             final String id = celestialBody.getDesignation().toLowerCase();
             PhongMaterial phongMaterial = (celestialBody.getCelestialBodyCategory().equals(CelestialBodyCategory.STAR))
                     ? TextureUtils.getTexture(id)
-                    : TextureUtils.getTextureFromColor(id);
+                    : TextureUtils.getTextureColor(id);
 
-            currentPivot.setCacheHint(CacheHint.SPEED);
+            currentPivot.setCacheHint(CacheHint.QUALITY);
             ((Sphere) currentPivot).setMaterial(phongMaterial);
         }
     }

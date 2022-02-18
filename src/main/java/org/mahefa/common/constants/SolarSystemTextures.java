@@ -3,19 +3,29 @@ package org.mahefa.common.constants;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ * Diffuse: is the color map.
+ * Specular/bump: is a texture that defines how the light reflect the object.
+ * Bump/Normal: is a texture that defines how an object looks really with some bumps.
+ * Illumination:
+ *
+ * Planet like Jupiter does not have a specular or either bump map by the fact
+ * that he's just a giant gas.
+ */
 public enum SolarSystemTextures {
-    SUN ("sun", "#F7FD04", "sun.jpg", null, null, null),
-    MERCURY ("mercury", "#DDDDDD", "mercury/mercury_color_map.jpg", null, "mercury/mercury_bump_map.jpg", null),
-    VENUS ("venus", "#FB9300", "venus/venus_color_map.jpg", null, "venus/venus_bump_map.jpg", null),
-    EARTH ("earth", "#125D98", "earth/earth_color_map.jpg", "earth/earth_specular_map.jpg", "earth/earth_bump_map.jpg", null),
-    MARS ("mars", "#C84B31", "mars/mars_color_map_v2.jpg", null, "mars/mars_bump_map.jpg", null),
-    JUPITER ("jupiter", "#A45C40", "jupiter/jupiter_color_map.jpg", null, null, null),
-    SATURN ("saturn", "#D8B384", "saturn/saturn_color_map.jpg", null, null, "saturn/saturn_ring_color.jpg"),
-    URANUS ("uranus", "#CEE5D0", "uranus/uranus_color_map.jpg", null, null, "uranus/uranus_ring_color.jpg"),
-    NEPTUNE ("neptune", "#3C8DAD", "neptune/neptune_color_map.jpg", null, null, null),
-    MOON ("moon", "#C2B8A3", "earth/moon/moon.jpg", null, null, null),
-    DEIMOS ("deimos", "#C2B8A3", null, null, "mars/deimos_bump.jpg", null),
-    PHOBOS ("phobos", "#C2B8A3", null, null, "mars/phobos_bump.jpg", null);
+    SUN ("sun", "#F7FD04", "sun.jpg", null, null, "sun.jpg", null),
+    MERCURY ("mercury", "#DDDDDD", "mercury/map.jpg", "mercury/bump.jpg", null,null, null),
+    VENUS ("venus", "#FB9300", "venus/map.jpg", "venus/bump.jpg", null, null, null),
+    EARTH ("earth", "#125D98", "earth/map.jpg", "earth/specular.jpg", "earth/bump.jpg", "earth/illumination.jpg", null),
+    MARS ("mars", "#C84B31", "mars/map.jpg", "mars/bump.jpg", null, null, null),
+    JUPITER ("jupiter", "#A45C40", "jupiter/map.jpg", null, null, null, null),
+    SATURN ("saturn", "#D8B384", "saturn/map.jpg", null, null, null, "saturn/saturn_ring_color.jpg"),
+    URANUS ("uranus", "#CEE5D0", "uranus/map.jpg", null, null, null, "uranus/uranus_ring_color.jpg"),
+    NEPTUNE ("neptune", "#3C8DAD", "neptune/map.jpg", null, null, null, null),
+    MOON ("moon", "#C2B8A3", "earth/satellites/moon/map.jpg", null, null, null, null),
+    DEIMOS ("deimos", "#C2B8A3", null, null, "mars/deimos_bump.jpg", null, null),
+    PHOBOS ("phobos", "#C2B8A3", null, null, "mars/phobos_bump.jpg", null, null);
 
     private static final Map<String, SolarSystemTextures> BY_LABEL = new HashMap<>();
 
@@ -24,6 +34,7 @@ public enum SolarSystemTextures {
     private String diffuseMap;
     private String specularMap;
     private String bumpMap;
+    private String illuminationMap;
     private String ring;
 
     static {
@@ -32,12 +43,13 @@ public enum SolarSystemTextures {
         }
     }
 
-    SolarSystemTextures(String designation, String color, String diffuseMap, String specularMap, String bumpMap, String ring) {
+    SolarSystemTextures(String designation, String color, String diffuseMap, String specularMap, String bumpMap, String illuminationMap, String ring) {
         this.designation = designation;
         this.color = color;
         this.diffuseMap = diffuseMap;
         this.specularMap = specularMap;
         this.bumpMap = bumpMap;
+        this.illuminationMap = illuminationMap;
         this.ring = ring;
     }
 
@@ -54,6 +66,8 @@ public enum SolarSystemTextures {
     public static String getBumpMap(String designation) {
         return BY_LABEL.get(designation).bumpMap;
     }
+
+    public static String getIlluminationMap(String designation) { return BY_LABEL.get(designation).illuminationMap; }
 
     public static String getRing(String designation) {
         return BY_LABEL.get(designation).ring;

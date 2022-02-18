@@ -1,15 +1,13 @@
 package org.mahefa.service.application.javafx.object.galaxy;
 
 import javafx.geometry.Bounds;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
-import javafx.scene.PointLight;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 import org.fxyz3d.shapes.primitives.SegmentedSphereMesh;
 import org.mahefa.common.constants.CelestialBodyCategory;
 import org.mahefa.common.utils.NodeUtils;
@@ -96,6 +94,8 @@ public class GalaxyAppServiceImpl implements GalaxyAppService {
             segmentedSphereMesh.setMaterial(phongMaterial);
             segmentedSphereMesh.getTransforms().add(new Rotate(60.2));
             segmentedSphereMesh.setRotationAxis(Rotate.Y_AXIS);
+            segmentedSphereMesh.setCache(true);
+            segmentedSphereMesh.setCacheHint(CacheHint.QUALITY);
 
             galaxyXform.getChildren().add(segmentedSphereMesh);
 
@@ -105,7 +105,7 @@ public class GalaxyAppServiceImpl implements GalaxyAppService {
 
                 if(sphere != null)
                     starXform.getChildren()
-                            .addAll(sphere, createLightSource(sphere.getTranslateX(), sphere.getTranslateY(), sphere.getTranslateZ()));
+                            .addAll(sphere, NodeUtils.createLightSource(sphere.getTranslateX(), sphere.getTranslateY(), sphere.getTranslateZ()));
             });
 
             (galaxy.getPlanets()).stream()
@@ -142,15 +142,6 @@ public class GalaxyAppServiceImpl implements GalaxyAppService {
         });
 
         return dataViews;
-    }
-
-    private PointLight createLightSource(double x, double y, double z) {
-        PointLight pointLight = new PointLight();
-        pointLight.setColor(Color.WHITE);
-
-        pointLight.getTransforms().add(new Translate(x, y, z));
-
-        return pointLight;
     }
 
     private Label attachLabel(Node node) {

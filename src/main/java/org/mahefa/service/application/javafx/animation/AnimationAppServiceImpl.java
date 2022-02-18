@@ -4,7 +4,6 @@ import javafx.animation.*;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import org.fxyz3d.geometry.Vector3D;
 import org.mahefa.common.utils.math.geometry.angle.Angle;
 import org.mahefa.data.oracle.Xform;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,14 +84,16 @@ public class AnimationAppServiceImpl implements AnimationAppService {
                         new KeyValue(xform.ry.angleProperty(), angle+old)
                 )
         );
+        timeline.setOnFinished(event -> old += angle);
+        timeline.play();
 
-        Vector3D vector3D = new Vector3D();
-        SequentialTransition sequentialTransition = new SequentialTransition(timeline);
-        sequentialTransition.setCycleCount(1);
-//        sequentialTransition.setInterpolator(Interpolator.EASE_BOTH);
-        sequentialTransition.setDelay(Duration.millis(5000));
-        sequentialTransition.setOnFinished(event -> old += angle);
-        sequentialTransition.play();
+//        Vector3D vector3D = new Vector3D();
+//        SequentialTransition sequentialTransition = new SequentialTransition(timeline);
+//        sequentialTransition.setCycleCount(1);
+////        sequentialTransition.setInterpolator(Interpolator.EASE_BOTH);
+//        sequentialTransition.setDelay(Duration.millis(5000));
+//        sequentialTransition.setOnFinished(event -> old += angle);
+//        sequentialTransition.play();
     }
 
     @Override

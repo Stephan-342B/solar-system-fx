@@ -4,12 +4,12 @@ import javafx.animation.*;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
+import org.fxyz3d.geometry.Vector3D;
 import org.mahefa.common.utils.math.geometry.angle.Angle;
 import org.mahefa.data.oracle.Xform;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.vecmath.Vector3d;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -65,12 +65,12 @@ public class AnimationAppServiceImpl implements AnimationAppService {
     }
 
     @Override
-    public void move(Xform xform, Vector3d vector3dFrom, Vector3d vector3dTo) {
+    public void move(Xform xform, Vector3D vector3dFrom, Vector3D vector3dTo) {
         final double x = vector3dFrom.getX();
         final double y = vector3dFrom.getY();
         final double z = vector3dFrom.getZ();
 
-        final double angle = Angle.getAngleFromPoints(vector3dFrom, vector3dTo);
+        final double angle = vector3dFrom.angle(vector3dTo);
         final double radius = Math.sqrt((x * x) + (y * y) + (z * z));
         final double length = Angle.getArcLength(angle, radius, false);
 

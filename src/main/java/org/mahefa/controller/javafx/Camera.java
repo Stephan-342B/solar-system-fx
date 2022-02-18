@@ -2,13 +2,12 @@ package org.mahefa.controller.javafx;
 
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
+import org.fxyz3d.geometry.Vector3D;
 import org.mahefa.data.oracle.Xform;
 import org.mahefa.service.application.javafx.animation.AnimationAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.vecmath.Vector3d;
 
 @Component
 public class Camera {
@@ -61,20 +60,18 @@ public class Camera {
     }
 
     public void lock(Node pivotA, Node pivotB) {
-        Vector3d coordinateFrom = new Vector3d(perspectiveCamera.getTranslateX(), perspectiveCamera.getTranslateY(), perspectiveCamera.getTranslateZ());
+        Vector3D coordinateFrom = new Vector3D(perspectiveCamera.getTranslateX(), perspectiveCamera.getTranslateY(), perspectiveCamera.getTranslateZ());
                 //new Coordinate(cameraXform.t.getX(), cameraXform.t.getY(), cameraXform.t.getZ());
 
         if(pivotB != null) {
             if(pivotA != null) {
-                coordinateFrom.setX(pivotA.getTranslateX());
-                coordinateFrom.setY(pivotA.getTranslateY());
-                coordinateFrom.setZ(pivotA.getTranslateZ());
+                coordinateFrom.setValues(pivotA.getTranslateX(), pivotA.getTranslateY(), pivotA.getTranslateZ());
             }
 
             animationAppService.move(
                     cameraXform,
                     coordinateFrom,
-                    new Vector3d(pivotB.getTranslateX(), pivotB.getTranslateY(), pivotB.getTranslateZ())
+                    new Vector3D(pivotB.getTranslateX(), pivotB.getTranslateY(), pivotB.getTranslateZ())
             );
         }
     }

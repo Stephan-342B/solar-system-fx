@@ -3,9 +3,8 @@ package org.mahefa.service.application.javafx.animation;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import org.fxyz3d.geometry.Vector3D;
 import org.mahefa.data.oracle.Xform;
-
-import javax.vecmath.Vector3d;
 
 public interface AnimationAppService {
 
@@ -15,7 +14,7 @@ public interface AnimationAppService {
     void fadeIn(final Node node, final Pane container);
     void fadeOut(Node node, final Pane container);
 
-    void move(Xform xform, Vector3d vector3dFrom, Vector3d vector3dTo);
+    void move(Xform xform, Vector3D vector3dFrom, Vector3D vector3dTo);
     void lock(Xform xform, Node node);
 
 }

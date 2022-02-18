@@ -2,6 +2,7 @@ package org.mahefa.service.application.astro.meeus.jean.algorithm.planetary_posi
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.Node;
+import org.fxyz3d.geometry.Vector3D;
 import org.mahefa.common.utils.calendar.julian_day.JulianDay;
 import org.mahefa.common.utils.math.astronomy.AstroMath;
 import org.mahefa.common.utils.math.geometry.angle.Angle;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.vecmath.Vector3d;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -72,10 +72,10 @@ public class PlanetaryPositionAppServiceImpl implements PlanetaryPositionAppServ
         double R0 = AstroMath.computeTerm(earthVsop87PeriodicTerm.getR(), t);
 
         // Combine value
-        Vector3d vector3d = AstroMath.getCoordinates(L, B, R, L0, B0, R0);
+        Vector3D vector3D = AstroMath.getCoordinates(L, B, R, L0, B0, R0);
 
         // Correct effect of light-time and aberration
-        final double Δ = AstroMath.distanceToEarth(vector3d.getX(), vector3d.getY(), vector3d.getZ());
+        final double Δ = AstroMath.distanceToEarth(vector3D.getX(), vector3D.getY(), vector3D.getZ());
         final double τ = 0.0057755183 * Δ;
         final double instant = JulianDay.inJulianMillennia(JDE - τ);
 
@@ -87,9 +87,9 @@ public class PlanetaryPositionAppServiceImpl implements PlanetaryPositionAppServ
         B0 = AstroMath.computeTerm(earthVsop87PeriodicTerm.getB(), instant);
         R0 = AstroMath.computeTerm(earthVsop87PeriodicTerm.getR(), instant);
 
-        vector3d = AstroMath.getCoordinates(L, B, R, L0, B0, R0);
+        vector3D = AstroMath.getCoordinates(L, B, R, L0, B0, R0);
 
-        return new HeliocentricCoordinate(vector3d.getX(), vector3d.getY(), vector3d.getZ());
+        return new HeliocentricCoordinate(vector3D.getX(), vector3D.getY(), vector3D.getZ());
     }
 
     @Override

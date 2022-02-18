@@ -1,8 +1,8 @@
 package org.mahefa.common.utils.math.astronomy;
 
+import org.fxyz3d.geometry.Vector3D;
 import org.mahefa.data.meeus.jean.Term;
 
-import javax.vecmath.Vector3d;
 import java.util.List;
 
 public final class AstroMath {
@@ -128,12 +128,12 @@ public final class AstroMath {
         return AstroMath.horner(t, rows) / Math.pow(10, 8);
     }
 
-    public static Vector3d getCoordinates(final double L, final double B, final double R, final double L0, final double B0, final double R0) {
+    public static Vector3D getCoordinates(final double L, final double B, final double R, final double L0, final double B0, final double R0) {
         final double x = (R * Math.cos(B) * Math.cos(L)) - (R0 * Math.cos(B0) * Math.cos(L0));
         final double y = (R * Math.cos(B) * Math.sin(L)) - (R0 * Math.cos(B0) * Math.sin(L0));
         final double z = (R * Math.sin(B)) - (R0 * Math.sin(B0));
 
-        return new Vector3d(
+        return new Vector3D(
                 AstroMath.round(x, 1e6),
                 AstroMath.round(y, 1e6),
                 AstroMath.round(z, 1e6)

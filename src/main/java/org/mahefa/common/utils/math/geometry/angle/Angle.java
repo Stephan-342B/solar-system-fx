@@ -1,6 +1,6 @@
 package org.mahefa.common.utils.math.geometry.angle;
 
-import javax.vecmath.Vector3d;
+import org.fxyz3d.geometry.Vector3D;
 
 public final class Angle {
 
@@ -82,7 +82,7 @@ public final class Angle {
      * @param vector3dTo
      * @return angle in degree
      */
-    public static double getAngleFromPoints(Vector3d vector3dFrom, Vector3d vector3dTo) {
+    public static double getAngleFromPoints(Vector3D vector3dFrom, Vector3D vector3dTo) {
         final double x1 = vector3dFrom.getX();
         final double y1 = vector3dFrom.getY();
         final double z1 = vector3dFrom.getZ();

@@ -1,107 +1,214 @@
 package org.mahefa.service.business.galaxy;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.mahefa.common.constants.OrbitalElements;
-import org.mahefa.common.utils.JsonUtils;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import org.mahefa.data.CelestialBody;
 import org.mahefa.data.Galaxy;
 import org.mahefa.data.OrbitalCharacteristic;
 import org.mahefa.data.PhysicalCharacteristic;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class DataBusinessServiceImpl implements DataBusinessService {
 
-    private static final String ORBITAL_CHARACTERISTIC = "orbitalCharacteristic";
-    private static final String PHYSICAL_CHARACTERISTIC = "physicalCharacteristic";
-
-    @Autowired
-    private JsonUtils jsonUtils;
-
-    @Value("${galaxy.location.file}")
-    private String galaxyLocationFile;
+    @Value("${galaxy.location.file}") private String galaxyLocationFile;
 
     @Override
     public List<Galaxy> loadGalaxies() {
-        JSONObject jsonObject = jsonUtils.readJsonFile(galaxyLocationFile);
         List<Galaxy> galaxies = new ArrayList<>();
 
-        if(jsonObject != null) {
-            JSONArray galaxyJSONArray = (JSONArray)jsonObject.get("galaxies");
+        try(InputStream inputStream = getClass().getResourceAsStream(galaxyLocationFile)) {
+            JsonFactory jsonFactory = new JsonFactory();
+            JsonParser jsonParser = jsonFactory.createParser(inputStream);
 
-            // Load galaxy
-            for(int gl = 0; gl < galaxyJSONArray.length(); gl++) {
-                JSONObject galaxyJSONObject = galaxyJSONArray.getJSONObject(gl);
-                Galaxy.Builder galaxy = new Galaxy.Builder(galaxyJSONObject.getString("designation"));
+            if(jsonParser != null) {
+                jsonParser.nextToken(); // Start Object {
+                JsonToken jsonToken = jsonParser.nextToken();
 
-                // Load star
-                galaxy.addStars(loadCelestialBodies(galaxyJSONObject.getJSONArray("stars")));
+                if (jsonToken == JsonToken.FIELD_NAME && "galaxies".equals(jsonParser.getCurrentName())) {
+                    Galaxy.Builder galaxy = null;
+                    jsonToken = jsonParser.nextToken(); // Start Array [
 
-                // Load planet
-                galaxy.addPlanets(loadCelestialBodies(galaxyJSONObject.getJSONArray("planets")));
+                    while (jsonToken != JsonToken.END_ARRAY) {
+                        jsonToken = jsonParser.nextToken();
 
-                galaxies.add(galaxy.build());
+                        if (jsonToken == JsonToken.START_OBJECT) // Start Object {
+                            continue;
+
+                        final String currentName = jsonParser.getCurrentName();
+
+                        if (jsonToken == JsonToken.FIELD_NAME && "designation".equals(currentName)) {
+                            jsonToken = jsonParser.nextToken();
+
+                            if (jsonToken == JsonToken.VALUE_STRING) {
+                                galaxy = new Galaxy.Builder(jsonParser.getText());
+                            }
+                        } else if (jsonToken == JsonToken.FIELD_NAME && "planets".equals(currentName)) {
+                            galaxy.addPlanets(loadCelestialBodies(jsonParser));
+                        } else if (jsonToken == JsonToken.FIELD_NAME && "stars".equals(currentName)) {
+                            galaxy.addStars(loadCelestialBodies(jsonParser));
+                        }
+
+                        if (jsonToken == JsonToken.END_OBJECT) // End Object }
+                            galaxies.add(galaxy.build());
+                    }
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return galaxies;
     }
 
-    List<CelestialBody> loadCelestialBodies(JSONArray celestialBodyJSONArray) {
+    List<CelestialBody> loadCelestialBodies(JsonParser jsonParser) throws Exception {
         List<CelestialBody> celestialBodies = new ArrayList<>();
+        jsonParser.nextToken(); // Start Array [
+        JsonToken jsonToken = jsonParser.nextToken(); // Start Object {
 
-        for(int cb = 0; cb < celestialBodyJSONArray.length(); cb++) {
-            JSONObject celestialBodyJSONObject = celestialBodyJSONArray.getJSONObject(cb);
-            JSONObject orbitalCharacteristicJSONObject = celestialBodyJSONObject.getJSONObject(ORBITAL_CHARACTERISTIC);
-            JSONObject physicalCharacteristicJSONObject = celestialBodyJSONObject.getJSONObject(PHYSICAL_CHARACTERISTIC);
+        String designation = null;
+        String celestialBodyCategory = null;
+        PhysicalCharacteristic physicalCharacteristic = null;
+        OrbitalCharacteristic orbitalCharacteristic = null;
 
-            final String designation = celestialBodyJSONObject.getString("designation");
-            final double[] semiMajorAxis = loadPolynomialValues(orbitalCharacteristicJSONObject.getJSONArray(OrbitalElements.SEMI_MAJOR_AXIS.toValue()));
-            final double[] eccentricities = loadPolynomialValues(orbitalCharacteristicJSONObject.getJSONArray(OrbitalElements.ECCENTRICITY.toValue()));
-            final double[] inclinations = loadPolynomialValues(orbitalCharacteristicJSONObject.getJSONArray(OrbitalElements.INCLINATION.toValue()));
-            final double[] longitudeAscendingNodes = loadPolynomialValues(orbitalCharacteristicJSONObject.getJSONArray(OrbitalElements.LONGITUDE_OF_ASCENDING_NODE.toValue()));
-            final double[] longitudesPerihelion = loadPolynomialValues(orbitalCharacteristicJSONObject.getJSONArray(OrbitalElements.LONGITUDE_OF_PERIHELION.toValue()));
-            final double[] meanLongitudes = loadPolynomialValues(orbitalCharacteristicJSONObject.getJSONArray(OrbitalElements.MEAN_LONGITUDE.toValue()));
+        while (jsonToken != JsonToken.END_ARRAY) { // End Array ]
+            jsonToken = jsonParser.nextToken();
 
-            PhysicalCharacteristic physicalCharacteristic = new PhysicalCharacteristic.Builder(
-                    physicalCharacteristicJSONObject.getDouble("radius"), physicalCharacteristicJSONObject.getDouble("mass")
-            )
-                    .setAxialTilt(physicalCharacteristicJSONObject.getDouble("axialTilt"))
-                    .isRingSystem(physicalCharacteristicJSONObject.getBoolean("isRingSystem"))
-                    .build();
+            if (jsonToken == JsonToken.FIELD_NAME) {
+                switch (jsonParser.getCurrentName()) {
+                    case "designation":
+                        jsonToken = jsonParser.nextToken();
+                        designation = jsonParser.getText();
+                        break;
+                    case "celestialBodyCategory":
+                        jsonToken = jsonParser.nextToken();
+                        celestialBodyCategory = jsonParser.getText();
+                        break;
+                    case "celestialBodies":
+                        loadCelestialBodies(jsonParser);
+                        break;
+                    case "orbitalCharacteristic":
+                        orbitalCharacteristic = getOrbitalCharacteristic(jsonParser);
+                        break;
+                    case "physicalCharacteristic":
+                        physicalCharacteristic = getPhysicalCharacteristic(jsonParser);
+                        break;
+                }
+            }
 
-            OrbitalCharacteristic orbitalCharacteristic = new OrbitalCharacteristic.Builder(semiMajorAxis)
-                    .setInclinations(inclinations)
-                    .setEccentricities(eccentricities)
-                    .setLongitudeAscendingNodes(longitudeAscendingNodes)
-                    .setLongitudesPerihelion(longitudesPerihelion)
-                    .setMeanLongitudes(meanLongitudes)
-                    .build();
+            if(jsonToken == JsonToken.END_OBJECT) { // End Object }
+                CelestialBody.Builder planet = new CelestialBody.Builder(designation, orbitalCharacteristic, physicalCharacteristic)
+                        .setCategory(celestialBodyCategory);
 
-            CelestialBody.Builder planet = new CelestialBody.Builder(designation, orbitalCharacteristic, physicalCharacteristic)
-                    .setCategory(celestialBodyJSONObject.getString("celestialBodyCategory"));
+//                planet.addCelestialBodies(loadCelestialBodies((JSONArray)celestialBodyJSONObject.getJSONArray("celestialBodies")));
 
-            planet.addCelestialBodies(loadCelestialBodies((JSONArray)celestialBodyJSONObject.getJSONArray("celestialBodies")));
-
-            celestialBodies.add(planet.build());
+                celestialBodies.add(planet.build());
+            }
         }
 
         return celestialBodies;
     }
 
-    double[] loadPolynomialValues(JSONArray orbitalElements) {
-        double[] polynomials = new double[4];
+    PhysicalCharacteristic getPhysicalCharacteristic(JsonParser jsonParser) throws IOException {
+        double radius = 0d;
+        double mass = 0d;
+        double axialTilt = 0d;
+        boolean isRingSystem = false;
 
-        for(int i = 0; i < polynomials.length; i++) {
-            polynomials[i] = orbitalElements.getDouble(i);
+        jsonParser.nextToken(); // Start Object {
+
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "axialTilt".equalsIgnoreCase(jsonParser.getCurrentName())) {
+            if(jsonParser.nextToken() == JsonToken.VALUE_NUMBER_FLOAT)
+                axialTilt = jsonParser.getDoubleValue();
         }
 
-        return polynomials;
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "mass".equalsIgnoreCase(jsonParser.getCurrentName())) {
+            if(jsonParser.nextToken() == JsonToken.VALUE_NUMBER_FLOAT)
+                mass = jsonParser.getDoubleValue();
+        }
+
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "radius".equalsIgnoreCase(jsonParser.getCurrentName())) {
+            if(jsonParser.nextToken() == JsonToken.VALUE_NUMBER_FLOAT)
+                radius = jsonParser.getDoubleValue();
+        }
+
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "isRingSystem".equalsIgnoreCase(jsonParser.getCurrentName())) {
+            if(jsonParser.nextToken() == JsonToken.VALUE_TRUE)
+                isRingSystem = jsonParser.getBooleanValue();
+        }
+
+        jsonParser.nextToken(); // End Object }
+
+        return new PhysicalCharacteristic.Builder(radius, mass)
+                .setAxialTilt(axialTilt)
+                .isRingSystem(isRingSystem)
+                .build();
+    }
+
+    OrbitalCharacteristic getOrbitalCharacteristic(JsonParser jsonParser) throws Exception {
+        double[] semiMajorAxis = new double[4];
+        double[] inclinations = new double[4];
+        double[] eccentricities = new double[4];
+        double[] longitudeAscendingNodes = new double[4];
+        double[] longitudesPerihelion = new double[4];
+        double[] meanLongitudes = new double[4];
+
+        jsonParser.nextToken(); // Start Object {
+
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "L".equalsIgnoreCase(jsonParser.getCurrentName()))
+            meanLongitudes = loadPolynomialValues(jsonParser);
+
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "a".equalsIgnoreCase(jsonParser.getCurrentName()))
+            semiMajorAxis = loadPolynomialValues(jsonParser);
+
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "e".equalsIgnoreCase(jsonParser.getCurrentName()))
+            eccentricities = loadPolynomialValues(jsonParser);
+
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "i".equalsIgnoreCase(jsonParser.getCurrentName()))
+            inclinations = loadPolynomialValues(jsonParser);
+
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "Ω".equalsIgnoreCase(jsonParser.getCurrentName()))
+            longitudeAscendingNodes = loadPolynomialValues(jsonParser);
+
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "Π".equalsIgnoreCase(jsonParser.getCurrentName()))
+            longitudesPerihelion = loadPolynomialValues(jsonParser);
+
+        jsonParser.nextToken(); // End Object }
+
+        return new OrbitalCharacteristic.Builder(semiMajorAxis)
+                .setInclinations(inclinations)
+                .setEccentricities(eccentricities)
+                .setLongitudeAscendingNodes(longitudeAscendingNodes)
+                .setLongitudesPerihelion(longitudesPerihelion)
+                .setMeanLongitudes(meanLongitudes)
+                .build();
+    }
+
+    double[] loadPolynomialValues(JsonParser jsonParser) throws Exception {
+        JsonToken jsonToken = jsonParser.nextToken(); // Start Array [
+
+        if(jsonToken != JsonToken.START_ARRAY)
+            throw new Exception("Not an array");
+
+        double[] data = new double[4];
+        int i = 0;
+
+        while (i < 4) {
+            jsonToken = jsonParser.nextToken();
+
+            if(jsonToken == JsonToken.VALUE_NUMBER_FLOAT)
+                data[i++] = jsonParser.getDoubleValue();
+        }
+
+        jsonParser.nextToken(); // End Array ]
+
+        return data;
     }
 }

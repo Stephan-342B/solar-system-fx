@@ -1,8 +1,3 @@
 /.idea/
-/src/main/resources/compiled-css/button.css
-/src/main/resources/compiled-css/date-time.css
-/src/main/resources/compiled-css/description-box.css
-/src/main/resources/compiled-css/label.css
-/src/main/resources/compiled-css/style.css
-/src/main/resources/compiled-css/table-view.css
-/src/main/resources/compiled-css/variables.css
+/target/
+/.github/

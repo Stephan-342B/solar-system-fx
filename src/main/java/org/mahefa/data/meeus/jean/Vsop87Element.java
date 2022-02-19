@@ -2,7 +2,7 @@ package org.mahefa.data.meeus.jean;
 
 import java.util.List;
 
-public class Vsop87PeriodicTerm {
+public class Vsop87Element {
 
     private String label;
     private List<Term> l;

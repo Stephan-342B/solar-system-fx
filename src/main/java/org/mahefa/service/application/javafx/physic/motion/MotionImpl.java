@@ -1,7 +1,6 @@
 package org.mahefa.service.application.javafx.physic.motion;
 
 import javafx.animation.AnimationTimer;
-import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MotionAppServiceServiceImpl implements MotionAppService {
+public class MotionImpl implements Motion {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MotionAppServiceServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MotionImpl.class);
 
     private static final double ROTATION_SPEED = 0.01;
     private static final double ORBITAL_SPEED = 0.00003;
@@ -21,21 +20,6 @@ public class MotionAppServiceServiceImpl implements MotionAppService {
 
     @Value("${scale.distance.value}")
     double scaleDistanceValue;
-
-    @Override
-    public AnimationTimer rotate(Node node, final double degreePerSecond) {
-        AnimationTimer animationTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                node.rotateProperty().set(node.getRotate() + degreePerSecond);
-                node.setRotationAxis(new Point3D(0, 1, 0));
-            }
-        };
-
-        animationTimer.start();
-
-        return animationTimer;
-    }
 
     /**
      * x(α) = Rx cos(α)

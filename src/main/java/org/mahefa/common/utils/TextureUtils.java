@@ -43,9 +43,7 @@ public class TextureUtils {
             phongMaterial.setBumpMap(getImage(bumpMap, false));
         } else {
             if(StringUtils.isNotBlank(specularMap)) {
-                NormalMap normalMap = new NormalMap(getImage(specularMap, true));
-                normalMap.setIntensity(250);
-                normalMap.setIntensityScale(500);
+                NormalMap normalMap = new NormalMap(50d, 75d, false, getImage(specularMap, true));
                 phongMaterial.setBumpMap(normalMap);
             }
         }

@@ -6,7 +6,7 @@ import org.mahefa.data.view.DataView;
 
 import java.util.List;
 
-public interface GalaxyAppService {
+public interface Galaxy {
 
     CelestialBody getCelestialBody(String id);
 

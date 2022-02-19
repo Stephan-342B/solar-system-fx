@@ -4,6 +4,6 @@ import org.mahefa.data.Galaxy;
 
 import java.util.List;
 
-public interface DataBusinessService {
+public interface DataLoader {
     List<Galaxy> loadGalaxies();
 }

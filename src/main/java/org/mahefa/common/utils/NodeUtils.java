@@ -3,7 +3,6 @@ package org.mahefa.common.utils;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.PointLight;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
@@ -26,15 +25,27 @@ public class NodeUtils {
         final String designation = celestialBody.getDesignation().toLowerCase();
         final double axialTilt = physicalCharacteristic.getAxialTilt();
         final boolean isAStar = celestialBody.getCelestialBodyCategory().equals(CelestialBodyCategory.STAR);
-        final double radius = (isAStar) ? 30d : 9d;
+        final double radius = 9d;
         final PhongMaterial phongMaterial = (isAStar) ? TextureUtils.getTexture(designation)
                 : TextureUtils.getTextureColor(designation);
 
         Sphere sphere = new Sphere(radius);
         sphere.setId(designation);
-        sphere.setTranslateX((coordinate.getX() * AstroMath.AU * 1e-3) * scaleDistanceValue);
+
+        /**
+         * Cartesian coordinates
+         *                Z |
+         *                  |
+         *                  |
+         *                  |
+         *                  . _ _ _ _ _ Y
+         *                /
+         *               /
+         *            X /
+         */
+        sphere.setTranslateX((coordinate.getY() * AstroMath.AU * 1e-3) * scaleDistanceValue);
         sphere.setTranslateY((coordinate.getZ() * AstroMath.AU * 1e-3) * scaleDistanceValue);
-        sphere.setTranslateZ((coordinate.getY() * AstroMath.AU * 1e-3) * scaleDistanceValue);
+        sphere.setTranslateZ((coordinate.getX() * AstroMath.AU * 1e-3) * scaleDistanceValue);
         sphere.setMaterial(phongMaterial);
         sphere.setUserData(celestialBody);
         sphere.setDrawMode(DrawMode.FILL);
@@ -42,8 +53,7 @@ public class NodeUtils {
         sphere.getTransforms().add(new Rotate(axialTilt));
         sphere.setRotationAxis(Rotate.Y_AXIS);
         sphere.setCache(true);
-        sphere.setCacheHint(CacheHint.QUALITY);
-        sphere.setBlendMode(BlendMode.ADD);
+        sphere.setCacheHint(CacheHint.SPEED);
 
         Lighting lighting = new Lighting();
         lighting.setLight(new Light.Distant());

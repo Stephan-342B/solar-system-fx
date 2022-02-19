@@ -80,7 +80,7 @@
                     <Region styleClass="icon, icon-solar-system"></Region>
                 </graphic>
             </Button>
-            <Button fx:id="planetView" onAction="#showDescription" visible="false" managed="false" maxWidth="1.7976931348623157E308" styleClass="bt-default">
+            <Button fx:id="planetView" onAction="#showDescriptionBox" visible="false" managed="false" maxWidth="1.7976931348623157E308" styleClass="bt-default">
                 <graphic>
                     <Region styleClass="icon, icon-planet"></Region>
                 </graphic>

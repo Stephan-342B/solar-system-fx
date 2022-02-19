@@ -1,6 +1,5 @@
 package org.mahefa.controller;
 
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
@@ -27,9 +26,9 @@ import org.mahefa.controller.javafx.Camera;
 import org.mahefa.data.CelestialBody;
 import org.mahefa.data.oracle.Xform;
 import org.mahefa.data.view.DataView;
-import org.mahefa.service.application.javafx.animation.AnimationAppService;
-import org.mahefa.service.application.javafx.object.galaxy.GalaxyAppService;
-import org.mahefa.service.application.javafx.physic.motion.MotionAppService;
+import org.mahefa.service.application.javafx.animation.Animation;
+import org.mahefa.service.application.javafx.object.galaxy.Galaxy;
+import org.mahefa.service.application.javafx.physic.motion.Motion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,7 +37,9 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class MainWindowController {
@@ -52,9 +53,9 @@ public class MainWindowController {
     @FXML SubScene subScene;
     @FXML Pane imagePanel;
 
-    @Autowired GalaxyAppService galaxyAppService;
-    @Autowired MotionAppService motionAppService;
-    @Autowired AnimationAppService animationAppService;
+    @Autowired Galaxy galaxy;
+    @Autowired Motion motion;
+    @Autowired Animation animation;
     @Autowired Camera camera;
 
     @Value("${mouse.speed}") double mouseSpeed;
@@ -62,12 +63,15 @@ public class MainWindowController {
     @Value("${track.speed}") double trackSpeed;
     @Value("${date.format}") String dateFormat;
     @Value("${time.format}") String timFormat;
+    @Value("${camera.initial.distance}") double initialDistance;
+    @Value("${camera.close.range}") double closeRangeDistance;
 
     final Group root = new Group();
     final Xform world = new Xform();
 
     private double mouseOldX, mouseOldY, mousePosY, mousePosX, deltaX, deltaY;
     private Node currentPivot;
+    List<Object> controls = new ArrayList<>();
 
     @FXML
     private void initialize() {
@@ -77,7 +81,7 @@ public class MainWindowController {
         root.getChildren().addAll(world, camera.build());
         root.setDepthTest(DepthTest.ENABLE);
 
-        world.getChildren().add( galaxyAppService.buildGalaxy(JulianDay.getJDEAt()));
+        world.getChildren().add( galaxy.buildGalaxy(JulianDay.getJDEAt()));
 
         showCurrentDateTime();
 
@@ -94,33 +98,32 @@ public class MainWindowController {
 
     @FXML
     private void enterInnerView(ActionEvent event) {
-        animationAppService.fadeOut(tableView, anchorPane);
+        animation.fadeOut(tableView);
         closeDescriptionBox(event);
 
-        animationAppService.fadeOut(innerView, controlButtonBox);
-        animationAppService.fadeOut(planetView, controlButtonBox);
-        animationAppService.fadeIn(outerView, controlButtonBox);
+        animation.fadeOut(innerView);
+        animation.fadeOut(planetView);
+        animation.fadeIn(outerView);
     }
 
     @FXML
     private void enterOuterView(ActionEvent event) {
-        animationAppService.fadeOut(tableView, anchorPane);
+        animation.fadeOut(tableView);
         closeDescriptionBox(event);
 
-        animationAppService.fadeOut(outerView, controlButtonBox);
-        animationAppService.fadeOut(planetView, controlButtonBox);
-        animationAppService.fadeIn(innerView, controlButtonBox);
+        animation.fadeOut(outerView);
+        animation.fadeOut(planetView);
+        animation.fadeIn(innerView);
 
-        camera.reset();
-        camera.resetPositionFrom(currentPivot);
+        camera.release();
 
         resetPivot();
     }
 
     @FXML
-    private void showDescription(ActionEvent event) {
+    private void showDescriptionBox(ActionEvent event) {
         if(!descriptionBox.visibleProperty().getValue()) {
-            animationAppService.fadeIn(descriptionBox, anchorPane);
+            animation.fadeIn(descriptionBox);
             tableView.setVisible(false);
 
             if(currentPivot != null) {
@@ -136,9 +139,9 @@ public class MainWindowController {
         loadAstronomicalCoordinates();
 
         if(tableView.visibleProperty().getValue()) {
-            animationAppService.fadeOut(tableView, anchorPane);
+            animation.fadeOut(tableView);
         } else {
-            animationAppService.fadeIn(tableView, anchorPane);
+            animation.fadeIn(tableView);
         }
 
         closeDescriptionBox(event);
@@ -146,7 +149,7 @@ public class MainWindowController {
 
     @FXML
     private void closeDescriptionBox(ActionEvent event) {
-        animationAppService.fadeOut(descriptionBox, anchorPane);
+        animation.fadeOut(descriptionBox);
     }
 
     private void showCurrentDateTime() {
@@ -158,12 +161,12 @@ public class MainWindowController {
             currentTime.setText(localTime.format(DateTimeFormatter.ofPattern(timFormat)));
         }), new KeyFrame(Duration.seconds(1)));
 
-        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.setCycleCount(javafx.animation.Animation.INDEFINITE);
         timeline.play();
     }
 
     private void loadAstronomicalCoordinates() {
-        final List<DataView> dataViews = galaxyAppService.getInfo(JulianDay.getJDEAt());
+        final List<DataView> dataViews = galaxy.getInfo(JulianDay.getJDEAt());
         ObservableList<DataView> data = FXCollections.observableArrayList();
 
         // Add columns
@@ -210,24 +213,24 @@ public class MainWindowController {
     }
 
     private void nodeEventControl() {
-        List<Node> nodes = getNodes(0);
+        List<Node> nodes = ((Xform) ((Xform) ((Xform) world.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).getChildren();
 
         if(nodes != null && !nodes.isEmpty()) {
             nodes.forEach(node -> {
                 node.setOnMouseClicked(event -> {
-                    animationAppService.fadeOut(innerView, controlButtonBox);
-                    animationAppService.fadeOut(outerView, controlButtonBox);
-                    animationAppService.fadeOut(tableView, anchorPane);
-
-//                    planetView.setVisible(true);
-                    animationAppService.fadeIn(planetView, controlButtonBox);
-                    planetView.setText(node.getId().toUpperCase());
-                    planetView.setId(node.getId().toLowerCase());
+                    innerView.visibleProperty().setValue(false);
+                    outerView.visibleProperty().setValue(false);
+                    tableView.visibleProperty().setValue(false);
+                    planetView.visibleProperty().setValue(true);
 
                     // Get special class
                     planetView.getGraphic().getStyleClass().removeAll("isRingSystem");
 
                     final CelestialBody celestialBody = (CelestialBody) node.getUserData();
+                    final String id = celestialBody.getDesignation().toLowerCase();
+
+                    planetView.setText(id.toUpperCase());
+                    planetView.setId(id);
 
                     if(celestialBody.getPhysicalCharacteristic().isRingSystem())
                         planetView.getGraphic().getStyleClass().add("isRingSystem");
@@ -235,14 +238,12 @@ public class MainWindowController {
                     // Reset previous pivot
                     resetPivot();
 
-                    node.setCacheHint(CacheHint.ROTATE);
-
                     // Load texture
-                    ((Sphere)node).setMaterial(TextureUtils.getTexture(node.getId().toLowerCase()));
+                    CompletableFuture.runAsync(() -> ((Sphere)node).setMaterial(TextureUtils.getTexture(id)));
 
                     // Lock on pivot
-                    camera.lock(currentPivot, node);
-//                    motionAppService.rotate(node, 0.005);
+                    camera.lockOn(node);
+                    animation.rotate(node, 0.005);
 
                     currentPivot = node;
                 });
@@ -258,8 +259,12 @@ public class MainWindowController {
             PerspectiveCamera perspectiveCamera = camera.getPerspectiveCamera();
             double delta = event.getDeltaY();
             double z = perspectiveCamera.getTranslateZ();
+            final double value = z + delta * mouseSpeed;
 
-            perspectiveCamera.setTranslateZ(z + delta * mouseSpeed);
+            if(value < initialDistance || value > closeRangeDistance)
+                return;
+
+            perspectiveCamera.setTranslateZ(value);
 
             // TODO: update scale
         });
@@ -300,13 +305,8 @@ public class MainWindowController {
                     ? TextureUtils.getTexture(id)
                     : TextureUtils.getTextureColor(id);
 
-            currentPivot.setCacheHint(CacheHint.QUALITY);
             ((Sphere) currentPivot).setMaterial(phongMaterial);
         }
-    }
-
-    List<Node> getNodes(int index) {
-        return ((Xform) ((Xform) ((Xform) world.getChildren().get(0)).getChildren().get(0)).getChildren().get(index)).getChildren();
     }
 
     void managedControl() {
@@ -315,5 +315,21 @@ public class MainWindowController {
         innerView.managedProperty().bind(innerView.visibleProperty());
         tableView.managedProperty().bind(tableView.visibleProperty());
         descriptionBox.managedProperty().bind(descriptionBox.visibleProperty());
+
+//        controls.addAll(planetView, outerView, innerView, tableView);
     }
+
+//    void visibilityControl(Node node, boolean setToVisible) {
+//        controls.parallelStream().forEach(currentNode -> {
+//            if(setToVisible && currentNode != node && currentNode.visibleProperty().getValue()) {
+//                animation.fadeOut(currentNode);
+//            } else if(currentNode == node) {
+//                if(!setToVisible) {
+//                    animation.fadeOut(currentNode);
+//                } else {
+//                    animation.fadeIn(node);
+//                }
+//            }
+//        });
+//    }
 }

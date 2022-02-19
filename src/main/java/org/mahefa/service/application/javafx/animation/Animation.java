@@ -2,19 +2,19 @@ package org.mahefa.service.application.javafx.animation;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import org.fxyz3d.geometry.Vector3D;
 import org.mahefa.data.oracle.Xform;
 
-public interface AnimationAppService {
+public interface Animation {
 
     void add(String key, AnimationTimer animationTimer);
     void remove(String... keys);
 
-    void fadeIn(final Node node, final Pane container);
-    void fadeOut(Node node, final Pane container);
+    void fadeIn(Node node);
+    void fadeOut(Node node);
 
-    void move(Xform xform, Vector3D vector3dFrom, Vector3D vector3dTo);
-    void lock(Xform xform, Node node);
+    void move(Xform xform, Vector3D vFrom, Vector3D vTo);
+
+    void rotate(Node node, final double degreePerSecond);
 
 }

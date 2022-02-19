@@ -38,16 +38,16 @@ public class TextureUtils {
         } else {
             phongMaterial.setSpecularColor(Color.WHITE);
         }
-        double s = System.currentTimeMillis();
+
         if(StringUtils.isNotBlank(bumpMap)) {
             phongMaterial.setBumpMap(getImage(bumpMap, false));
         } else {
             if(StringUtils.isNotBlank(specularMap)) {
-                NormalMap normalMap = new NormalMap(getImage(specularMap, true));
+                NormalMap normalMap = new NormalMap(50d, 75d, false, getImage(specularMap, true));
                 phongMaterial.setBumpMap(normalMap);
             }
         }
-        System.out.println("bump "+(System.currentTimeMillis()-s));
+
         if(StringUtils.isNotBlank(illuminationMap))
             phongMaterial.setSelfIlluminationMap(getImage(illuminationMap, false));
 

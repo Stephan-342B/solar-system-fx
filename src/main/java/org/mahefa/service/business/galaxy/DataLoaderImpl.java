@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DataBusinessServiceImpl implements DataBusinessService {
+public class DataLoaderImpl implements DataLoader {
 
     @Value("${galaxy.location.file}") private String galaxyLocationFile;
 

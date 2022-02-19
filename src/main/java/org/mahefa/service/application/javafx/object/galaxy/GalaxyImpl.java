@@ -12,14 +12,13 @@ import org.fxyz3d.shapes.primitives.SegmentedSphereMesh;
 import org.mahefa.common.constants.CelestialBodyCategory;
 import org.mahefa.common.utils.NodeUtils;
 import org.mahefa.data.CelestialBody;
-import org.mahefa.data.Galaxy;
 import org.mahefa.data.meeus.jean.Coordinate;
 import org.mahefa.data.meeus.jean.GeocentricCoordinate;
 import org.mahefa.data.oracle.Xform;
 import org.mahefa.data.view.DataView;
 import org.mahefa.service.application.astro.meeus.jean.algorithm.planetary_position.PlanetaryPositionAppService;
 import org.mahefa.service.application.astro.meeus.jean.algorithm.planetary_position.vsop87.Vsop87;
-import org.mahefa.service.business.galaxy.DataBusinessService;
+import org.mahefa.service.business.galaxy.DataLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +29,14 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Service
-public class GalaxyAppServiceImpl implements GalaxyAppService {
+public class GalaxyImpl implements Galaxy {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GalaxyAppServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GalaxyImpl.class);
 
     @Autowired Vsop87 vsop87;
     @Autowired PlanetaryPositionAppService planetaryPositionAppService;
-    @Autowired DataBusinessService dataBusinessService;
+    @Autowired
+    DataLoader dataLoader;
 
     @Value("${scale.size.value}") double scaleSizeValue;
     @Value("${scale.distance.value}") double scaleDistanceValue;
@@ -45,12 +45,12 @@ public class GalaxyAppServiceImpl implements GalaxyAppService {
     Xform galaxyGroup = new Xform();
 
     public Map<String, Coordinate> coordinates;
-    public static List<Galaxy> galaxies;
+    public static List<org.mahefa.data.Galaxy> galaxies;
 
     @PostConstruct
     private void init() {
         // Load galaxies
-        galaxies = dataBusinessService.loadGalaxies();
+        galaxies = dataLoader.loadGalaxies();
     }
 
     @Override

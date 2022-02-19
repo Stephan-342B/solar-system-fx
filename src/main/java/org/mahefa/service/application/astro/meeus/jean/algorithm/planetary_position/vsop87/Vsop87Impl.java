@@ -6,7 +6,7 @@ import org.mahefa.common.utils.calendar.julian_day.JulianDay;
 import org.mahefa.common.utils.math.astronomy.AstroMath;
 import org.mahefa.common.utils.math.geometry.angle.Angle;
 import org.mahefa.data.meeus.jean.GeocentricCoordinate;
-import org.mahefa.data.meeus.jean.Vsop87PeriodicTerm;
+import org.mahefa.data.meeus.jean.Vsop87Element;
 import org.mahefa.service.application.astro.meeus.jean.algorithm.nutations.Nutation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +31,18 @@ public class Vsop87Impl implements Vsop87 {
     @Value("${periodic.term.location.file}")
     String periodicTermLocationFile;
 
-    static List<Vsop87PeriodicTerm> vsop87PeriodicTerms;
+    static List<Vsop87Element> vsop87Elements;
 
     @PostConstruct
     private void init() {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try(InputStream inputStream = Vsop87Impl.class.getResourceAsStream(periodicTermLocationFile)) {
-            vsop87PeriodicTerms = objectMapper.readValue(inputStream, objectMapper.getTypeFactory()
-                    .constructCollectionType(List.class, Vsop87PeriodicTerm.class));
+            vsop87Elements = objectMapper.readValue(inputStream, objectMapper.getTypeFactory()
+                    .constructCollectionType(List.class, Vsop87Element.class));
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-            vsop87PeriodicTerms = new ArrayList<>();
+            vsop87Elements = new ArrayList<>();
         }
     }
 
@@ -94,22 +94,22 @@ public class Vsop87Impl implements Vsop87 {
         if(planet.equalsIgnoreCase("earth"))
             throw new Exception("Cannot compute heliocentric position using this method");
 
-        final Vsop87PeriodicTerm vsop87PeriodicTerm = findPeriodicTerm(planet);
+        final Vsop87Element vsop87Element = findPeriodicTerm(planet);
         final double JDE = JulianDay.getJulianEphemerisDay(t);
 
         // Convert time in julian centuries to julian millennia
         t *= 1e-1;
 
-        double L = AstroMath.computeTerm(vsop87PeriodicTerm.getL(), t);
-        double B = AstroMath.computeTerm(vsop87PeriodicTerm.getB(), t);
-        double R = AstroMath.computeTerm(vsop87PeriodicTerm.getR(), t);
+        double L = AstroMath.computeTerm(vsop87Element.getL(), t);
+        double B = AstroMath.computeTerm(vsop87Element.getB(), t);
+        double R = AstroMath.computeTerm(vsop87Element.getR(), t);
 
-        final Vsop87PeriodicTerm earthVsop87PeriodicTerm = findPeriodicTerm("earth");
+        final Vsop87Element earthVsop87Element = findPeriodicTerm("earth");
 
         // Calculates the Earth's coordinates
-        double L0 = AstroMath.computeTerm(earthVsop87PeriodicTerm.getL(), t);
-        double B0 = AstroMath.computeTerm(earthVsop87PeriodicTerm.getB(), t);
-        double R0 = AstroMath.computeTerm(earthVsop87PeriodicTerm.getR(), t);
+        double L0 = AstroMath.computeTerm(earthVsop87Element.getL(), t);
+        double B0 = AstroMath.computeTerm(earthVsop87Element.getB(), t);
+        double R0 = AstroMath.computeTerm(earthVsop87Element.getR(), t);
 
         // Combine value
         Vector3D vector3D = AstroMath.getCoordinates(L, B, R, L0, B0, R0);
@@ -120,18 +120,18 @@ public class Vsop87Impl implements Vsop87 {
         final double instant = JulianDay.inJulianMillennia(JDE - τ);
 
         // Recalculate at T - τ
-        L = AstroMath.computeTerm(vsop87PeriodicTerm.getL(), instant);
-        B = AstroMath.computeTerm(vsop87PeriodicTerm.getB(), instant);
-        R = AstroMath.computeTerm(vsop87PeriodicTerm.getR(), instant);
-        L0 = AstroMath.computeTerm(earthVsop87PeriodicTerm.getL(), instant);
-        B0 = AstroMath.computeTerm(earthVsop87PeriodicTerm.getB(), instant);
-        R0 = AstroMath.computeTerm(earthVsop87PeriodicTerm.getR(), instant);
+        L = AstroMath.computeTerm(vsop87Element.getL(), instant);
+        B = AstroMath.computeTerm(vsop87Element.getB(), instant);
+        R = AstroMath.computeTerm(vsop87Element.getR(), instant);
+        L0 = AstroMath.computeTerm(earthVsop87Element.getL(), instant);
+        B0 = AstroMath.computeTerm(earthVsop87Element.getB(), instant);
+        R0 = AstroMath.computeTerm(earthVsop87Element.getR(), instant);
 
         return AstroMath.getCoordinates(L, B, R, L0, B0, R0);
     }
 
-    Vsop87PeriodicTerm findPeriodicTerm(String designation) throws Exception {
-        Optional<Vsop87PeriodicTerm> optionalVsop87PeriodicTerm = vsop87PeriodicTerms.stream()
+    Vsop87Element findPeriodicTerm(String designation) throws Exception {
+        Optional<Vsop87Element> optionalVsop87PeriodicTerm = vsop87Elements.stream()
                 .filter(term -> term.getLabel().equalsIgnoreCase(designation))
                 .findFirst();
 

@@ -4,7 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import org.fxyz3d.geometry.Vector3D;
 import org.mahefa.data.oracle.Xform;
-import org.mahefa.service.application.javafx.animation.AnimationAppService;
+import org.mahefa.service.application.javafx.animation.Animation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ public class Camera {
     @Value("${camera.close.range}") double closeRange;
 
     @Autowired
-    AnimationAppService animationAppService;
+    Animation animation;
 
     public Camera() {}
 
@@ -59,39 +59,31 @@ public class Camera {
         return cameraXform;
     }
 
-    public void lock(Node pivotA, Node pivotB) {
-        Vector3D coordinateFrom = new Vector3D(perspectiveCamera.getTranslateX(), perspectiveCamera.getTranslateY(), perspectiveCamera.getTranslateZ());
-                //new Coordinate(cameraXform.t.getX(), cameraXform.t.getY(), cameraXform.t.getZ());
+    public void lockOn(Node pivot) {
+        if(pivot == null)
+            System.out.println("Coordinates not specified");
 
-        if(pivotB != null) {
-            if(pivotA != null) {
-                coordinateFrom.setValues(pivotA.getTranslateX(), pivotA.getTranslateY(), pivotA.getTranslateZ());
-            }
+        Vector3D vFrom = new Vector3D(perspectiveCamera.getTranslateX(), perspectiveCamera.getTranslateY(), perspectiveCamera.getTranslateZ());
 
-            animationAppService.move(
-                    cameraXform,
-                    coordinateFrom,
-                    new Vector3D(pivotB.getTranslateX(), pivotB.getTranslateY(), pivotB.getTranslateZ())
-            );
-        }
-    }
-
-    public void resetPositionFrom(Node pivot) {
         if(pivot != null) {
-//            animationAppService.move(
-//                    perspectiveCamera,
-//                    new Coordinate(pivot.getTranslateX(), pivot.getTranslateY(), pivot.getTranslateZ()),
-//                    new Coordinate(0d, 0d, initialDistance)
-//            );
+            Vector3D vTo = new Vector3D(pivot.getTranslateX(), pivot.getTranslateY(), pivot.getTranslateZ());
+
+            // Already at the specified coordinate
+            if(vFrom == vTo)
+                return;
+
+            animation.move(cameraXform, vFrom, vTo);
         }
     }
 
-    public void reset() {
-        cameraXform.rx.setAngle(initialXAngle);
-        cameraXform.ry.setAngle(initialYAngle);
+    public void release() {
+        Vector3D vFrom = new Vector3D(perspectiveCamera.getTranslateX(), perspectiveCamera.getTranslateY(), perspectiveCamera.getTranslateZ());
+        Vector3D vTo = Vector3D.ZERO;
 
-        perspectiveCamera.setNearClip(nearClip);
-        perspectiveCamera.setFarClip(farClip);
-        perspectiveCamera.setTranslateZ(initialDistance);
+        // Already at the specified coordinate
+        if(vFrom == vTo)
+            return;
+
+        animation.move(cameraXform, vFrom, vTo);
     }
 }

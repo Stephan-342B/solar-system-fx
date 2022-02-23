@@ -55,7 +55,7 @@ public class Vsop87Impl implements Vsop87 {
 
         // Calculate the longitude and latitude
         double λ = Math.atan2(y, x);
-        double β = Math.atan2(z, Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2))));
+        double β = Math.atan2(z, Math.sqrt((x * x) + (y * y)));
 
         // Corrections for reduction to the FK5
         final double[] polynomials = { λ, Math.toRadians(-1.397), -0.00031 };
@@ -88,6 +88,11 @@ public class Vsop87Impl implements Vsop87 {
                 (Angle.normalize(Math.toDegrees(AstroMath.round(α, 1e6))) / 15),
                 Math.toDegrees(AstroMath.round(δ, 1e6))
         );
+    }
+
+    @Override
+    public double getRTS(String planet) {
+        return 0;
     }
 
     Vector3D getHeliocentricEclipticCoord(String planet, double t) throws Exception {

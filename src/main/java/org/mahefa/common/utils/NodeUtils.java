@@ -3,8 +3,6 @@ package org.mahefa.common.utils;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.PointLight;
-import javafx.scene.effect.Light;
-import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
@@ -16,6 +14,7 @@ import org.mahefa.common.constants.CelestialBodyCategory;
 import org.mahefa.common.utils.math.astronomy.AstroMath;
 import org.mahefa.data.CelestialBody;
 import org.mahefa.data.PhysicalCharacteristic;
+import org.mahefa.data.UserData;
 import org.mahefa.data.meeus.jean.Coordinate;
 
 public class NodeUtils {
@@ -38,26 +37,22 @@ public class NodeUtils {
          *                  |
          *                  |
          *                  |
-         *                  . _ _ _ _ _ Y
-         *                /
-         *               /
-         *            X /
+         *                  . ------------ Y
+         *                .
+         *              .
+         *          X .
          */
-        sphere.setTranslateX((coordinate.getY() * AstroMath.AU * 1e-3) * scaleDistanceValue);
-        sphere.setTranslateY((coordinate.getZ() * AstroMath.AU * 1e-3) * scaleDistanceValue);
-        sphere.setTranslateZ((coordinate.getX() * AstroMath.AU * 1e-3) * scaleDistanceValue);
+        sphere.setTranslateX((coordinate.getY() * AstroMath.AU) * scaleDistanceValue);
+        sphere.setTranslateY((coordinate.getZ() * AstroMath.AU) * scaleDistanceValue);
+        sphere.setTranslateZ((coordinate.getX() * AstroMath.AU) * scaleDistanceValue);
         sphere.setMaterial(phongMaterial);
-        sphere.setUserData(celestialBody);
+        sphere.setUserData(new UserData(celestialBody));
         sphere.setDrawMode(DrawMode.FILL);
         sphere.setCullFace(CullFace.BACK);
         sphere.getTransforms().add(new Rotate(axialTilt));
         sphere.setRotationAxis(Rotate.Y_AXIS);
         sphere.setCache(true);
         sphere.setCacheHint(CacheHint.SPEED);
-
-        Lighting lighting = new Lighting();
-        lighting.setLight(new Light.Distant());
-        sphere.setEffect(lighting);
 
         return sphere;
     }

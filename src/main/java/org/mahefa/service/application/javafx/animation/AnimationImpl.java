@@ -121,15 +121,16 @@ public class AnimationImpl implements Animation {
     }
 
     @Override
-    public void rotate(Node node, final double degreePerSecond) {
+    public AnimationTimer rotate(Node node, final double degreePerSecond) {
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 node.rotateProperty().set(node.getRotate() + degreePerSecond);
-//                node.setRotationAxis(new Point3D(0, 1, 0));
             }
         };
         animationTimer.start();
+
+        return animationTimer;
     }
 
     FadeTransition fade(final Node node, boolean in) {

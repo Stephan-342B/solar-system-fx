@@ -1,8 +1,9 @@
 package org.mahefa.service.business.galaxy;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import org.mahefa.common.constants.OrbitalElements;
+import org.mahefa.common.utils.JSONUtils;
 import org.mahefa.data.CelestialBody;
 import org.mahefa.data.Galaxy;
 import org.mahefa.data.OrbitalCharacteristic;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,48 +21,42 @@ public class DataLoaderImpl implements DataLoader {
     @Value("${galaxy.location.file}") private String galaxyLocationFile;
 
     @Override
-    public List<Galaxy> loadGalaxies() {
+    public List<Galaxy> loadGalaxies() throws Exception {
         List<Galaxy> galaxies = new ArrayList<>();
+        JsonParser jsonParser = JSONUtils.read(galaxyLocationFile);
 
-        try(InputStream inputStream = getClass().getResourceAsStream(galaxyLocationFile)) {
-            JsonFactory jsonFactory = new JsonFactory();
-            JsonParser jsonParser = jsonFactory.createParser(inputStream);
+        if(jsonParser != null) {
+            jsonParser.nextToken(); // Start Object {
+            JsonToken jsonToken = jsonParser.nextToken();
 
-            if(jsonParser != null) {
-                jsonParser.nextToken(); // Start Object {
-                JsonToken jsonToken = jsonParser.nextToken();
+            if (jsonToken == JsonToken.FIELD_NAME && "galaxies".equals(jsonParser.getCurrentName())) {
+                Galaxy.Builder galaxy = null;
+                jsonToken = jsonParser.nextToken(); // Start Array [
 
-                if (jsonToken == JsonToken.FIELD_NAME && "galaxies".equals(jsonParser.getCurrentName())) {
-                    Galaxy.Builder galaxy = null;
-                    jsonToken = jsonParser.nextToken(); // Start Array [
+                while (jsonToken != JsonToken.END_ARRAY) {
+                    jsonToken = jsonParser.nextToken();
 
-                    while (jsonToken != JsonToken.END_ARRAY) {
+                    if (jsonToken == JsonToken.START_OBJECT) // Start Object {
+                        continue;
+
+                    final String currentName = jsonParser.getCurrentName();
+
+                    if (jsonToken == JsonToken.FIELD_NAME && "designation".equals(currentName)) {
                         jsonToken = jsonParser.nextToken();
 
-                        if (jsonToken == JsonToken.START_OBJECT) // Start Object {
-                            continue;
-
-                        final String currentName = jsonParser.getCurrentName();
-
-                        if (jsonToken == JsonToken.FIELD_NAME && "designation".equals(currentName)) {
-                            jsonToken = jsonParser.nextToken();
-
-                            if (jsonToken == JsonToken.VALUE_STRING) {
-                                galaxy = new Galaxy.Builder(jsonParser.getText());
-                            }
-                        } else if (jsonToken == JsonToken.FIELD_NAME && "planets".equals(currentName)) {
-                            galaxy.addPlanets(loadCelestialBodies(jsonParser));
-                        } else if (jsonToken == JsonToken.FIELD_NAME && "stars".equals(currentName)) {
-                            galaxy.addStars(loadCelestialBodies(jsonParser));
+                        if (jsonToken == JsonToken.VALUE_STRING) {
+                            galaxy = new Galaxy.Builder(jsonParser.getText());
                         }
-
-                        if (jsonToken == JsonToken.END_OBJECT) // End Object }
-                            galaxies.add(galaxy.build());
+                    } else if (jsonToken == JsonToken.FIELD_NAME && "planets".equals(currentName)) {
+                        galaxy.addPlanets(loadCelestialBodies(jsonParser));
+                    } else if (jsonToken == JsonToken.FIELD_NAME && "stars".equals(currentName)) {
+                        galaxy.addStars(loadCelestialBodies(jsonParser));
                     }
+
+                    if (jsonToken == JsonToken.END_OBJECT) // End Object }
+                        galaxies.add(galaxy.build());
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return galaxies;
@@ -162,22 +156,22 @@ public class DataLoaderImpl implements DataLoader {
 
         jsonParser.nextToken(); // Start Object {
 
-        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "L".equalsIgnoreCase(jsonParser.getCurrentName()))
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && OrbitalElements.MEAN_LONGITUDE.toValue().equalsIgnoreCase(jsonParser.getCurrentName()))
             meanLongitudes = loadPolynomialValues(jsonParser);
 
-        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "a".equalsIgnoreCase(jsonParser.getCurrentName()))
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && OrbitalElements.SEMI_MAJOR_AXIS.toValue().equalsIgnoreCase(jsonParser.getCurrentName()))
             semiMajorAxis = loadPolynomialValues(jsonParser);
 
-        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "e".equalsIgnoreCase(jsonParser.getCurrentName()))
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && OrbitalElements.ECCENTRICITY.toValue().equalsIgnoreCase(jsonParser.getCurrentName()))
             eccentricities = loadPolynomialValues(jsonParser);
 
-        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "i".equalsIgnoreCase(jsonParser.getCurrentName()))
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && OrbitalElements.INCLINATION.toValue().equalsIgnoreCase(jsonParser.getCurrentName()))
             inclinations = loadPolynomialValues(jsonParser);
 
-        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "Ω".equalsIgnoreCase(jsonParser.getCurrentName()))
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && OrbitalElements.LONGITUDE_OF_ASCENDING_NODE.toValue().equalsIgnoreCase(jsonParser.getCurrentName()))
             longitudeAscendingNodes = loadPolynomialValues(jsonParser);
 
-        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && "Π".equalsIgnoreCase(jsonParser.getCurrentName()))
+        if(jsonParser.nextToken() == JsonToken.FIELD_NAME && OrbitalElements.LONGITUDE_OF_PERIHELION.toValue().equalsIgnoreCase(jsonParser.getCurrentName()))
             longitudesPerihelion = loadPolynomialValues(jsonParser);
 
         jsonParser.nextToken(); // End Object }

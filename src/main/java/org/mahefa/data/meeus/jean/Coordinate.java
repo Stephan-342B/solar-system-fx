@@ -9,18 +9,7 @@ public class Coordinate {
     private Double y = 0d;
     private Double z = 0d;
 
-    /**
-     * Stored in decimal, minute, second
-     */
-    private Double rightAscension = 0d;
-    private Double declination = 0d;
-
     public Coordinate() {}
-
-    public Coordinate(Double rightAscension, Double declination) {
-        this.rightAscension = rightAscension;
-        this.declination = declination;
-    }
 
     public Coordinate(Double x, Double y, Double z) {
         this.x = x;
@@ -50,21 +39,5 @@ public class Coordinate {
 
     public void setZ(Double z) {
         this.z = z;
-    }
-
-    public Double getRightAscension() {
-        return rightAscension;
-    }
-
-    public void setRightAscension(Double rightAscension) {
-        this.rightAscension = rightAscension;
-    }
-
-    public Double getDeclination() {
-        return declination;
-    }
-
-    public void setDeclination(Double declination) {
-        this.declination = declination;
     }
 }

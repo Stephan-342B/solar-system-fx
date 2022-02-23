@@ -1,5 +1,6 @@
 package org.mahefa.controller;
 
+import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
@@ -24,6 +25,7 @@ import org.mahefa.common.utils.TextureUtils;
 import org.mahefa.common.utils.calendar.julian_day.JulianDay;
 import org.mahefa.controller.javafx.Camera;
 import org.mahefa.data.CelestialBody;
+import org.mahefa.data.UserData;
 import org.mahefa.data.oracle.Xform;
 import org.mahefa.data.view.DataView;
 import org.mahefa.service.application.javafx.animation.Animation;
@@ -98,25 +100,38 @@ public class MainWindowController {
 
     @FXML
     private void enterInnerView(ActionEvent event) {
-        animation.fadeOut(tableView);
-        closeDescriptionBox(event);
+        if(descriptionBox.visibleProperty().getValue())
+            animation.fadeOut(descriptionBox);
 
-        animation.fadeOut(innerView);
-        animation.fadeOut(planetView);
+        if(tableView.visibleProperty().getValue())
+            animation.fadeOut(tableView);
+
+        if(innerView.visibleProperty().getValue())
+            animation.fadeOut(innerView);
+
+        if(planetView.visibleProperty().getValue())
+            animation.fadeOut(planetView);
+
         animation.fadeIn(outerView);
     }
 
     @FXML
     private void enterOuterView(ActionEvent event) {
-        animation.fadeOut(tableView);
-        closeDescriptionBox(event);
+        if(descriptionBox.visibleProperty().getValue())
+            animation.fadeOut(descriptionBox);
 
-        animation.fadeOut(outerView);
-        animation.fadeOut(planetView);
+        if(tableView.visibleProperty().getValue())
+            animation.fadeOut(tableView);
+
+        if(outerView.visibleProperty().getValue())
+            animation.fadeOut(outerView);
+
+        if(planetView.visibleProperty().getValue())
+            animation.fadeOut(planetView);
+
         animation.fadeIn(innerView);
 
         camera.release();
-
         resetPivot();
     }
 
@@ -137,14 +152,14 @@ public class MainWindowController {
     @FXML
     private void showAstronomicalCoordinates(ActionEvent event) {
         loadAstronomicalCoordinates();
+        closeDescriptionBox(event);
 
         if(tableView.visibleProperty().getValue()) {
             animation.fadeOut(tableView);
-        } else {
-            animation.fadeIn(tableView);
+            return;
         }
 
-        closeDescriptionBox(event);
+        animation.fadeIn(tableView);
     }
 
     @FXML
@@ -224,9 +239,10 @@ public class MainWindowController {
                     planetView.visibleProperty().setValue(true);
 
                     // Get special class
-                    planetView.getGraphic().getStyleClass().removeAll("isRingSystem");
+                    planetView.getGraphic().getStyleClass().remove("isRingSystem");
 
-                    final CelestialBody celestialBody = (CelestialBody) node.getUserData();
+                    final UserData userData = (UserData) node.getUserData();
+                    final CelestialBody celestialBody = userData.getCelestialBody();
                     final String id = celestialBody.getDesignation().toLowerCase();
 
                     planetView.setText(id.toUpperCase());
@@ -243,7 +259,10 @@ public class MainWindowController {
 
                     // Lock on pivot
                     camera.lockOn(node);
-                    animation.rotate(node, 0.005);
+
+                    // Animate node
+                    AnimationTimer rotateAnimation = animation.rotate(node, 0.005);
+                    userData.setRotateAnimation(rotateAnimation);
 
                     currentPivot = node;
                 });
@@ -297,15 +316,29 @@ public class MainWindowController {
         });
     }
 
+    /**
+     * Stop and destroy animation (rotation)
+     * Revert texture to default color
+     * Remove style class on the image panel
+     */
     void resetPivot() {
         if(currentPivot != null) {
-            final CelestialBody celestialBody = (CelestialBody) currentPivot.getUserData();
+            final UserData userData = (UserData) currentPivot.getUserData();
+            final CelestialBody celestialBody = userData.getCelestialBody();
+            AnimationTimer rotate = userData.getRotateAnimation();
+
+            if(rotate != null) {
+                rotate.stop();
+                userData.setRotateAnimation(null);
+            }
+
             final String id = celestialBody.getDesignation().toLowerCase();
             PhongMaterial phongMaterial = (celestialBody.getCelestialBodyCategory().equals(CelestialBodyCategory.STAR))
                     ? TextureUtils.getTexture(id)
                     : TextureUtils.getTextureColor(id);
 
             ((Sphere) currentPivot).setMaterial(phongMaterial);
+            imagePanel.getStyleClass().remove(id);
         }
     }
 
@@ -315,21 +348,5 @@ public class MainWindowController {
         innerView.managedProperty().bind(innerView.visibleProperty());
         tableView.managedProperty().bind(tableView.visibleProperty());
         descriptionBox.managedProperty().bind(descriptionBox.visibleProperty());
-
-//        controls.addAll(planetView, outerView, innerView, tableView);
     }
-
-//    void visibilityControl(Node node, boolean setToVisible) {
-//        controls.parallelStream().forEach(currentNode -> {
-//            if(setToVisible && currentNode != node && currentNode.visibleProperty().getValue()) {
-//                animation.fadeOut(currentNode);
-//            } else if(currentNode == node) {
-//                if(!setToVisible) {
-//                    animation.fadeOut(currentNode);
-//                } else {
-//                    animation.fadeIn(node);
-//                }
-//            }
-//        });
-//    }
 }

@@ -59,14 +59,17 @@ public final class AstroMath {
      */
     public static double distanceToEarth(double x, double y, double z) {
         return Math.sqrt(
-                (Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2))
+                ((x * x) + (y * y) + (z * z))
         );
     }
 
     /**
      * Use the Horner's method to compute a polynomial form
      *
-     * y = A + x (B + x (c + x (d + xE)))
+     * y = A + Bx + Cx^2 + Dx^3 + Ex^4
+     *
+     * The polynomial form describe above can be written as follow
+     * y = A + x (B + x (C + x (D + xE)))
      *
      * @param x
      * @param coefficients
@@ -125,7 +128,7 @@ public final class AstroMath {
             i++;
         }
 
-        return AstroMath.horner(t, rows) / Math.pow(10, 8);
+        return AstroMath.horner(t, rows) / 1e8;
     }
 
     public static Vector3D getCoordinates(final double L, final double B, final double R, final double L0, final double B0, final double R0) {

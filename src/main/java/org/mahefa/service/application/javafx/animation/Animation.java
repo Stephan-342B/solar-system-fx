@@ -15,6 +15,6 @@ public interface Animation {
 
     void move(Xform xform, Vector3D vFrom, Vector3D vTo);
 
-    void rotate(Node node, final double degreePerSecond);
+    AnimationTimer rotate(Node node, final double degreePerSecond);
 
 }

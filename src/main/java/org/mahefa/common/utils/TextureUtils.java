@@ -51,8 +51,6 @@ public class TextureUtils {
         if(StringUtils.isNotBlank(illuminationMap))
             phongMaterial.setSelfIlluminationMap(getImage(illuminationMap, false));
 
-        phongMaterial.setSpecularPower(5e7);
-
         return phongMaterial;
     }
 

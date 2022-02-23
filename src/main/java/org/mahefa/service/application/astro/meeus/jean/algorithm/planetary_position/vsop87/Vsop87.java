@@ -17,10 +17,27 @@ public interface Vsop87 {
      * The correction for the light-time and the aberration has been done
      * at once by calculating the coordinates at the instant T - t (p Planet and Earth)
      *
+     * See Meeus, Jean. Astronomical Algorithms. Richmond, Virg.: Willmann-Bell,
+     *          2009. 214. Print.
+     *
      * @param planet is the celestial body
      * @param t is the julian date
-     * @return
+     * @return the geocentric ecliptical longitude and latitude
      */
     GeocentricCoordinate getMajorPlanetCoord(String planet, double t) throws Exception;
+
+    /**
+     * Rising, Transit and Setting
+     *
+     * The interpolation formula is:
+     * y = y2 + n/2(a + b + nc)
+     *
+     * See Meeus, Jean. Astronomical Algorithms. Richmond, Virg.: Willmann-Bell,
+     *          2009. 102. Print.
+     *
+     * @param planet
+     * @return
+     */
+    double getRTS(String planet);
 
 }

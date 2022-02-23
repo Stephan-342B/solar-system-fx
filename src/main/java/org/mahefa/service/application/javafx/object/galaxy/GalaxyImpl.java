@@ -49,21 +49,11 @@ public class GalaxyImpl implements Galaxy {
 
     @PostConstruct
     private void init() {
-        // Load galaxies
-        galaxies = dataLoader.loadGalaxies();
-    }
-
-    @Override
-    public CelestialBody getCelestialBody(String id) {
-        Optional<CelestialBody> optionalCelestialBody = galaxies.get(0).getPlanets()
-                .stream().filter(celestialBody -> celestialBody.getDesignation().equalsIgnoreCase(id)).findFirst();
-
-        if(!optionalCelestialBody.isPresent()) {
-            LOGGER.error("No celestial body found with this id: " + id);
-            return null;
+        try {
+            galaxies = dataLoader.loadGalaxies();
+        } catch (Exception e) {
+            LOGGER.error("Load Data: ", e);
         }
-
-        return optionalCelestialBody.get();
     }
 
     @Override
@@ -108,13 +98,13 @@ public class GalaxyImpl implements Galaxy {
                             .addAll(sphere, NodeUtils.createLightSource(sphere.getTranslateX(), sphere.getTranslateY(), sphere.getTranslateZ()));
             });
 
-            (galaxy.getPlanets()).stream()
-                    .filter(celestialBody -> !celestialBody.getDesignation().equalsIgnoreCase("earth"))
-                    .forEach(planet -> {
-                final Node parent = getSphere(planet, t);
+            (galaxy.getPlanets()).stream().forEach(planet -> {
+                if(!planet.getDesignation().equalsIgnoreCase("earth")) {
+                    final Node parent = getSphere(planet, t);
 
-                if(parent != null)
-                    celestialBodyXform.getChildren().add(parent);
+                    if(parent != null)
+                        celestialBodyXform.getChildren().add(parent);
+                }
             });
         });
 
@@ -163,7 +153,6 @@ public class GalaxyImpl implements Galaxy {
         Coordinate coordinate = new Coordinate();
 
         try {
-            // TODO: Implement rising, transit and setting p.102
             // TODO: Implement solar coordinates p.156
 
             final String designation = celestialBody.getDesignation().toLowerCase();

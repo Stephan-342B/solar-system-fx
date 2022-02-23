@@ -37,14 +37,14 @@ public class NodeUtils {
          *                  |
          *                  |
          *                  |
-         *                  . ------------ Y
+         *                  . ------------ X
          *                .
          *              .
-         *          X .
+         *          Y .
          */
-        sphere.setTranslateX((coordinate.getY() * AstroMath.AU) * scaleDistanceValue);
+        sphere.setTranslateX((coordinate.getX() * AstroMath.AU) * scaleDistanceValue);
         sphere.setTranslateY((coordinate.getZ() * AstroMath.AU) * scaleDistanceValue);
-        sphere.setTranslateZ((coordinate.getX() * AstroMath.AU) * scaleDistanceValue);
+        sphere.setTranslateZ((coordinate.getY() * AstroMath.AU) * scaleDistanceValue);
         sphere.setMaterial(phongMaterial);
         sphere.setUserData(new UserData(celestialBody));
         sphere.setDrawMode(DrawMode.FILL);
@@ -52,7 +52,7 @@ public class NodeUtils {
         sphere.getTransforms().add(new Rotate(axialTilt));
         sphere.setRotationAxis(Rotate.Y_AXIS);
         sphere.setCache(true);
-        sphere.setCacheHint(CacheHint.SPEED);
+        sphere.setCacheHint(CacheHint.QUALITY);
 
         return sphere;
     }

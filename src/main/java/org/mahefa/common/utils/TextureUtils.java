@@ -1,11 +1,8 @@
 package org.mahefa.common.utils;
 
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import org.fxyz3d.tools.NormalMap;
 import org.mahefa.common.constants.SolarSystemTextures;
 
 public class TextureUtils {
@@ -31,40 +28,26 @@ public class TextureUtils {
         PhongMaterial phongMaterial = new PhongMaterial();
 
         if(StringUtils.isNotBlank(diffuseMap))
-            phongMaterial.setDiffuseMap(getImage(diffuseMap, false));
+            phongMaterial.setDiffuseMap(getImage(diffuseMap));
 
         if(StringUtils.isNotBlank(specularMap)) {
-            phongMaterial.setSpecularMap(getImage(specularMap, false));
+            phongMaterial.setSpecularMap(getImage(specularMap));
         } else {
             phongMaterial.setSpecularColor(Color.WHITE);
         }
 
-        if(StringUtils.isNotBlank(bumpMap)) {
-            phongMaterial.setBumpMap(getImage(bumpMap, false));
-        } else {
-            if(StringUtils.isNotBlank(specularMap)) {
-                NormalMap normalMap = new NormalMap(50d, 75d, false, getImage(specularMap, true));
-                phongMaterial.setBumpMap(normalMap);
-            }
-        }
+        if(StringUtils.isNotBlank(bumpMap))
+            phongMaterial.setBumpMap(getImage(bumpMap));
 
         if(StringUtils.isNotBlank(illuminationMap))
-            phongMaterial.setSelfIlluminationMap(getImage(illuminationMap, false));
+            phongMaterial.setSelfIlluminationMap(getImage(illuminationMap));
+
+        phongMaterial.setSpecularPower(1e8);
 
         return phongMaterial;
     }
 
-    static Image getImage(final String filepath, final boolean applyBlur) {
-        Image image = new Image(TextureUtils.class.getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE, filepath)));
-
-        if(applyBlur) {
-            ImageView blurredImage = new ImageView(image);
-            GaussianBlur blur = new GaussianBlur(20);
-            blurredImage.setEffect(blur);
-            blurredImage.setPreserveRatio(true);
-            return blurredImage.getImage();
-        }
-
-        return image;
+    static Image getImage(final String filepath) {
+        return new Image(TextureUtils.class.getResourceAsStream(String.format("%s/%s", BASE_PATH_IMAGE, filepath)));
     }
 }

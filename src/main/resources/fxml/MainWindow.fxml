@@ -5,9 +5,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-
-<?import javafx.scene.text.Text?>
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.mahefa.controller.MainWindowController"
             fx:id="anchorPane" prefHeight="800.0" prefWidth="800.0">

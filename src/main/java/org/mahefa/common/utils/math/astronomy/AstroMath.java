@@ -106,7 +106,7 @@ public final class AstroMath {
      * @param termList
      * @param t
      *
-     * @return
+     * @return AU/Degree
      */
     public static double computeTerm(final List<Term> termList, final double t) {
         int i = 0;
@@ -124,14 +124,14 @@ public final class AstroMath {
                 row += (A * Math.cos(B + C));
             }
 
-            rows[i] = row;
+            rows[i] = Math.round(row);
             i++;
         }
 
-        return AstroMath.horner(t, rows) / 1e8;
+        return round(AstroMath.horner(t, rows) / 1e8, 1e6);
     }
 
-    public static Vector3D getCoordinates(final double L, final double B, final double R, final double L0, final double B0, final double R0) {
+    public static Vector3D getCoordinates(double L, double B, double R, double L0, double B0, double R0) {
         final double x = (R * Math.cos(B) * Math.cos(L)) - (R0 * Math.cos(B0) * Math.cos(L0));
         final double y = (R * Math.cos(B) * Math.sin(L)) - (R0 * Math.cos(B0) * Math.sin(L0));
         final double z = (R * Math.sin(B)) - (R0 * Math.sin(B0));
